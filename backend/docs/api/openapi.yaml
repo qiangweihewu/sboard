@@ -1,0 +1,110 @@
+openapi: 3.0.0
+info:
+  title: Xray Node Manager Backend API
+  version: v1.0.0
+  description: |-
+    API for managing Xray nodes, users, subscriptions, and related services.
+    This is a preliminary document and will be expanded.
+
+servers:
+  - url: http://localhost:8000/api # Change to your actual API base URL
+    description: Local development server
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  example: secret123
+                password_confirmation:
+                  type: string
+                  format: password
+                  example: secret123
+              required:
+                - email
+                - password
+                - password_confirmation
+      responses:
+        '201':
+          description: User successfully registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User successfully registered
+        '400':
+          description: Validation error (e.g., invalid input)
+          # Define error response structure if available
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Log in an existing user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  example: secret123
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Successful login, returns JWT token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+                  token_type:
+                    type: string
+                    example: bearer
+                  expires_in:
+                    type: integer
+                    example: 3600
+        '401':
+          description: Unauthorized (e.g., invalid credentials)
+        '422':
+          description: Validation error
+
+# Components (schemas, securitySchemes, etc.) can be added later
+# components:
+#   securitySchemes:
+#     bearerAuth:
+#       type: http
+#       scheme: bearer
+#       bearerFormat: JWT
+# security:
+#   - bearerAuth: []
