@@ -1,61 +1,47 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Xray Node Distribution and Subscription Management System - Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This directory contains the backend service for the Xray Node Distribution and Subscription Management System. It is built using Laravel.
 
-## About Laravel
+Refer to the main [AGENTS.MD](../../AGENTS.MD) in the root directory for the complete project plan and architecture.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Setup and Installation (Placeholder)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Detailed setup and installation instructions will be added here. This will typically involve:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1.  Cloning the repository.
+2.  Navigating to the `backend` directory.
+3.  Copying `.env.example` to `.env` and configuring environment variables (database, cache, queue, JWT secret, etc.).
+4.  Installing PHP dependencies: `composer install`.
+5.  Generating an application key: `php artisan key:generate`.
+6.  Running database migrations: `php artisan migrate`.
+7.  Running database seeders: `php artisan db:seed` (if applicable).
+8.  (Optional) Installing frontend dependencies if any are managed within this part: `npm install && npm run dev`.
+9.  Serving the application: `php artisan serve`.
 
-## Learning Laravel
+## API Documentation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Comprehensive API documentation is crucial for developers interacting with this backend.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+**Status:** Upcoming
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+**Format:** We plan to use the OpenAPI Specification (formerly Swagger) for documenting all API endpoints. This will likely result in an `openapi.yaml` or `openapi.json` file.
 
-## Laravel Sponsors
+**Accessing Documentation:** Once generated or published, details on how to access the interactive API documentation (e.g., via Swagger UI or Redoc) will be provided here.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+**Key Endpoint Categories to be Documented:**
+*   Authentication (`/auth/login`, `/auth/register`, `/auth/me`, etc.)
+*   Admin User Management (`/admin/users`)
+*   Admin User Group Management (`/admin/user-groups`)
+*   Admin Plan Management (`/admin/plans`)
+*   Admin Node Management (`/admin/nodes`)
+*   User Subscription Management (once implemented)
 
-### Premium Partners
+For now, refer to the route definitions in `routes/api.php` and the controller methods for endpoint details.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Running Tests (Placeholder)
 
-## Contributing
+To run the test suite:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan test
+```
