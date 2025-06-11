@@ -24,21 +24,22 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'is_active' => true,
+            // 'role_id' => null, // Example: can be set via a state or directly in tests
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
-    }
+    // Optional: Add a state to assign a specific role if needed frequently
+    // public function withRole(string $roleName = 'USER'): static
+    // {
+    //     return $this->state(function (array $attributes) use ($roleName) {
+    //         $role = \App\Models\Role::where('name', $roleName)->first();
+    //         return [
+    //             'role_id' => $role ? $role->id : null,
+    //         ];
+    //     });
+    // }
 }
