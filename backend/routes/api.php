@@ -7,6 +7,7 @@ use App\Http\Controllers\API\Admin\UserController;
 use App\Http\Controllers\API\Admin\UserGroupController;
 use App\Http\Controllers\API\Admin\PlanController;
 use App\Http\Controllers\API\Admin\NodeController;
+use App\Http\Controllers\API\Admin\RoleController;
 
 // Placeholder for future routes
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
@@ -29,4 +30,5 @@ Route::middleware(['auth:api', 'role:ADMIN'])->prefix('admin')->name('admin.')->
     Route::apiResource('user-groups', UserGroupController::class);
     Route::apiResource('plans', PlanController::class);
     Route::apiResource('nodes', NodeController::class);
+    Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
 });
