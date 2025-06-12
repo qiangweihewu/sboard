@@ -2,7 +2,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/Auth/LoginPage';
 import DashboardPage from './pages/Dashboard/DashboardPage';
-import UserListPage from './pages/Users/UserListPage'; // Import UserListPage
+import UserListPage from './pages/Users/UserListPage';
+import UserGroupListPage from './pages/UserGroups/UserGroupListPage'; // Import UserGroupListPage
 import MainLayout from './layouts/MainLayout';
 import ProtectedRoute from './router/ProtectedRoute';
 import { useAuth } from './contexts/AuthContext';
@@ -27,8 +28,12 @@ function App() {
               element={<DashboardPage />}
             />
             <Route
-              path="/users" // New route for User Management
+              path="/users"
               element={<UserListPage />}
+            />
+            <Route
+              path="/user-groups" // New route for User Group Management
+              element={<UserGroupListPage />}
             />
             {/* Add other protected routes here, e.g., /plans, /nodes */}
           </Route>
