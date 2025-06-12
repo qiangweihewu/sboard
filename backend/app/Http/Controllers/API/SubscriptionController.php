@@ -96,6 +96,10 @@ class SubscriptionController extends Controller
                 return $this->generateVlessConfig($node);
             case 'VMESS':
                 return $this->generateVmessConfig($node);
+            case 'SHADOWSOCKS':
+                return $this->generateShadowsocksConfig($node);
+            case 'TROJAN':
+                return $this->generateTrojanConfig($node);
             default:
                 return null;
         }
@@ -160,5 +164,49 @@ class SubscriptionController extends Controller
         $base64Config = base64_encode($jsonConfig);
 
         return "vmess://{$base64Config}";
+    }
+    
+    /**
+     * Generate Shadowsocks configuration string.
+     */
+    private function generateShadowsocksConfig(Node $node)
+    {
+        $config = $node->protocol_specific_config;
+        
+        $auth = base64_encode($config['method'] . ':' . $config['password']);
+        $fragment = urlencode($node->name);
+        
+        return "ss://{$auth}@{$node->address}:{$node->port}#{$fragment}";
+    }
+    
+    /**
+     * Generate Trojan configuration string.
+     */
+    private function generateTrojanConfig(Node $node)
+    {
+        $config = $node->protocol_specific_config;
+        
+        $params = [
+            'security' => $config['security'] ?? 'tls',
+            'type' => $config['type'] ?? 'tcp',
+        ];
+        
+        if (isset($config['sni'])) {
+            $params['sni'] = $config['sni'];
+        }
+        if (isset($config['path'])) {
+            $params['path'] = $config['path'];
+        }
+        if (isset($config['host'])) {
+            $params['host'] = $config['host'];
+        }
+        if (isset($config['alpn'])) {
+            $params['alpn'] = $config['alpn'];
+        }
+        
+        $queryString = http_build_query($params);
+        $fragment = urlencode($node->name);
+        
+        return "trojan://{$config['password']}@{$node->address}:{$node->port}?{$queryString}#{$fragment}";
     }
 }

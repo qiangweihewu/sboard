@@ -7,6 +7,7 @@ import UserGroupListPage from './pages/UserGroups/UserGroupListPage';
 import PlanListPage from './pages/Plans/PlanListPage';
 import NodeListPage from './pages/Nodes/NodeListPage';
 import SubscriptionListPage from './pages/Subscriptions/SubscriptionListPage';
+import TrafficOverviewPage from './pages/Traffic/TrafficOverviewPage';
 import MainLayout from './layouts/MainLayout';
 import ProtectedRoute from './router/ProtectedRoute';
 import { useAuth } from './contexts/AuthContext';
@@ -32,6 +33,7 @@ function App() {
             <Route path="/plans" element={<PlanListPage />} />
             <Route path="/nodes" element={<NodeListPage />} />
             <Route path="/subscriptions" element={<SubscriptionListPage />} />
+            <Route path="/traffic" element={<TrafficOverviewPage />} />
           </Route>
         </Route>
 

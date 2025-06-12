@@ -10,7 +10,8 @@ import {
   Server, 
   LayoutDashboard,
   LogOut,
-  FileText
+  FileText,
+  BarChart3
 } from 'lucide-react';
 
 const MainLayout: React.FC = () => {
@@ -24,6 +25,7 @@ const MainLayout: React.FC = () => {
     { name: 'Plans', href: '/plans', icon: Package },
     { name: 'Nodes', href: '/nodes', icon: Server },
     { name: 'Subscriptions', href: '/subscriptions', icon: FileText },
+    { name: 'Traffic', href: '/traffic', icon: BarChart3 },
   ];
 
   const isActive = (path: string) => {

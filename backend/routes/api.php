@@ -9,6 +9,7 @@ use App\Http\Controllers\API\Admin\PlanController;
 use App\Http\Controllers\API\Admin\NodeController;
 use App\Http\Controllers\API\Admin\RoleController;
 use App\Http\Controllers\API\Admin\SubscriptionController as AdminSubscriptionController;
+use App\Http\Controllers\API\Admin\TrafficController;
 use App\Http\Controllers\API\User\ProfileController;
 use App\Http\Controllers\API\User\PlanController as UserPlanController;
 use App\Http\Controllers\API\User\SubscriptionController as UserSubscriptionController;
@@ -37,6 +38,11 @@ Route::middleware(['auth:api', 'role:ADMIN,SUPER_ADMIN'])->prefix('admin')->name
     Route::apiResource('subscriptions', AdminSubscriptionController::class);
     Route::post('subscriptions/{subscription}/approve', [AdminSubscriptionController::class, 'approve'])->name('subscriptions.approve');
     Route::post('subscriptions/{subscription}/reject', [AdminSubscriptionController::class, 'reject'])->name('subscriptions.reject');
+    
+    // Traffic management
+    Route::get('traffic/overview', [TrafficController::class, 'overview'])->name('traffic.overview');
+    Route::get('traffic/logs', [TrafficController::class, 'logs'])->name('traffic.logs');
+    Route::get('traffic/user/{userId}', [TrafficController::class, 'userSummary'])->name('traffic.user');
 });
 
 // User Routes

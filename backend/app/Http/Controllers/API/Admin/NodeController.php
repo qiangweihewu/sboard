@@ -109,8 +109,92 @@ class NodeController extends Controller
             }
         }
 
+        // Attempt to parse as Shadowsocks (if not already parsed)
+        if (!$nodeData && Str::startsWith($configUrl, 'ss://')) {
+            try {
+                $ssUrl = Str::after($configUrl, 'ss://');
+                
+                // Handle different SS URL formats
+                if (strpos($ssUrl, '@') !== false) {
+                    // Format: ss://base64(method:password)@server:port#name
+                    list($encodedAuth, $rest) = explode('@', $ssUrl, 2);
+                    $decodedAuth = base64_decode($encodedAuth);
+                    if ($decodedAuth === false) {
+                        throw new Exception('Invalid Base64 encoding for Shadowsocks auth');
+                    }
+                    list($method, $password) = explode(':', $decodedAuth, 2);
+                    
+                    $serverPart = explode('#', $rest)[0];
+                    list($server, $port) = explode(':', $serverPart);
+                    $name = isset(explode('#', $rest)[1]) ? urldecode(explode('#', $rest)[1]) : 'SS Node ' . Str::random(4);
+                } else {
+                    // Format: ss://base64(method:password@server:port)#name
+                    $parts = explode('#', $ssUrl);
+                    $decodedConfig = base64_decode($parts[0]);
+                    if ($decodedConfig === false) {
+                        throw new Exception('Invalid Base64 encoding for Shadowsocks config');
+                    }
+                    
+                    if (strpos($decodedConfig, '@') === false) {
+                        throw new Exception('Invalid Shadowsocks URL format');
+                    }
+                    
+                    list($methodPassword, $serverPort) = explode('@', $decodedConfig);
+                    list($method, $password) = explode(':', $methodPassword, 2);
+                    list($server, $port) = explode(':', $serverPort);
+                    $name = isset($parts[1]) ? urldecode($parts[1]) : 'SS Node ' . Str::random(4);
+                }
+                
+                $nodeData = [
+                    'type' => 'SHADOWSOCKS',
+                    'address' => $server,
+                    'port' => (int)$port,
+                    'protocol_specific_config' => [
+                        'method' => $method,
+                        'password' => $password,
+                    ],
+                    'name' => $request->input('name', $name),
+                ];
+            } catch (Exception $e) {
+                return response()->json(['error' => 'Failed to parse Shadowsocks configuration: ' . $e->getMessage()], 400);
+            }
+        }
+        
+        // Attempt to parse as Trojan (if not already parsed)
+        if (!$nodeData && Str::startsWith($configUrl, 'trojan://')) {
+            try {
+                $parsedUrl = parse_url($configUrl);
+                if (!$parsedUrl || empty($parsedUrl['host']) || empty($parsedUrl['port']) || empty($parsedUrl['user'])) {
+                    throw new Exception('Invalid Trojan URI components');
+                }
+                
+                $queryParams = [];
+                if (isset($parsedUrl['query'])) {
+                    parse_str($parsedUrl['query'], $queryParams);
+                }
+                
+                $nodeData = [
+                    'type' => 'TROJAN',
+                    'address' => $parsedUrl['host'],
+                    'port' => (int)$parsedUrl['port'],
+                    'protocol_specific_config' => [
+                        'password' => $parsedUrl['user'],
+                        'sni' => $queryParams['sni'] ?? $parsedUrl['host'],
+                        'type' => $queryParams['type'] ?? 'tcp',
+                        'security' => $queryParams['security'] ?? 'tls',
+                        'path' => $queryParams['path'] ?? null,
+                        'host' => $queryParams['host'] ?? null,
+                        'alpn' => $queryParams['alpn'] ?? null,
+                    ],
+                    'name' => $request->input('name', rawurldecode($parsedUrl['fragment'] ?? 'Trojan Node ' . Str::random(4))),
+                ];
+            } catch (Exception $e) {
+                return response()->json(['error' => 'Failed to parse Trojan configuration: ' . $e->getMessage()], 400);
+            }
+        }
+
         if (!$nodeData) {
-            return response()->json(['error' => 'Unsupported or invalid node configuration URL. Only VLESS and VMess URIs are currently supported.'], 400);
+            return response()->json(['error' => 'Unsupported or invalid node configuration URL. Supported protocols: VLESS, VMess, Shadowsocks, Trojan.'], 400);
         }
 
         $nodeData['name'] = $request->input('name', $nodeData['name']);
