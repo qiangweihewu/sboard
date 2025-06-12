@@ -19,9 +19,7 @@ import {
   ChevronDown,
   Activity,
   Shield,
-  Database,
-  Globe,
-  Zap
+  Database
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -126,9 +124,9 @@ const MainLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+<div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-white/20 bg-white/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60 dark:bg-slate-900/80 dark:supports-[backdrop-filter]:bg-slate-900/60 shadow-sm">
+      <header className="sticky top-0 z-50 w-full border-b border-white/20 bg-white/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60 dark:bg-slate-900/80 dark:supports-[backdrop-filter]:bg-slate-900/60 shadow-lg transition-all duration-300">
         <div className="container flex h-16 items-center justify-between px-6">
           <div className="flex items-center space-x-4">
             <Button
@@ -141,9 +139,9 @@ const MainLayout: React.FC = () => {
             </Button>
             
             <div className="flex items-center space-x-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600 shadow-lg">
-                <Shield className="h-6 w-6 text-white" />
-              </div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600 shadow-lg transform hover:scale-105 transition-transform duration-200">
+              <Shield className="h-6 w-6 text-white animate-pulse-slow" />
+            </div>
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
                   Xray Manager
@@ -155,7 +153,7 @@ const MainLayout: React.FC = () => {
           
           <div className="flex items-center space-x-4">
             {/* System Status Indicators */}
-            <div className="hidden md:flex items-center space-x-3">
+          <div className="hidden md:flex items-center space-x-4">
               <div className="flex items-center space-x-1 px-2 py-1 rounded-full bg-green-50 dark:bg-green-900/20">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 <span className="text-xs text-green-700 dark:text-green-400 font-medium">API</span>
@@ -218,7 +216,7 @@ const MainLayout: React.FC = () => {
         {/* Sidebar */}
         <aside className={`${
           sidebarCollapsed ? 'w-16' : 'w-72'
-        } transition-all duration-300 ease-in-out border-r border-white/20 bg-white/50 backdrop-blur-xl dark:bg-slate-900/50 min-h-[calc(100vh-4rem)] sticky top-16 shadow-sm`}>
+        } transition-all duration-300 ease-in-out border-r border-white/20 bg-white/50 backdrop-blur-xl dark:bg-slate-900/50 min-h-[calc(100vh-4rem)] sticky top-16 shadow-lg`}>
           <nav className="p-4 space-y-6">
             {navigationGroups.map((group, groupIndex) => (
               <div key={group.title} className="space-y-2">
@@ -239,14 +237,14 @@ const MainLayout: React.FC = () => {
                     const active = isActive(item.href);
                     
                     return (
-                      <Link
-                        key={item.name}
-                        to={item.href}
-                        className={`group flex items-center space-x-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
-                          active
-                            ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25 transform scale-[1.02]'
-                            : 'text-slate-700 hover:bg-white/80 hover:text-slate-900 hover:shadow-md dark:text-slate-300 dark:hover:bg-slate-800/80 dark:hover:text-slate-100'
-                        }`}
+                        <Link
+                          key={item.name}
+                          to={item.href}
+                          className={`group flex items-center space-x-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                            active
+                              ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25 transform scale-[1.02] hover:scale-[1.03]'
+                              : 'text-slate-700 hover:bg-white/80 hover:text-slate-900 hover:shadow-md dark:text-slate-300 dark:hover:bg-slate-800/80 dark:hover:text-slate-100 hover:scale-[1.01]'
+                          }`}
                       >
                         <div className={`p-2 rounded-lg transition-colors ${
                           active 
@@ -276,7 +274,7 @@ const MainLayout: React.FC = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-6 lg:p-8">
+        <main className="flex-1 p-6 lg:p-8 transition-all duration-300">
           <div className="mx-auto max-w-7xl">
             <Outlet />
           </div>
