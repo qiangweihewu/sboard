@@ -64,7 +64,7 @@ const SubscriptionListPage: React.FC = () => {
   const [subscriptions, setSubscriptions] = useState<SubscriptionData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const [isApproveDialogOpen, setIsApproveDialogOpen] = useState(false);
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
@@ -75,7 +75,7 @@ const SubscriptionListPage: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const params = statusFilter ? `?status=${statusFilter}` : '';
+      const params = statusFilter !== "all" ? `?status=${statusFilter}` : '';
       const response = await apiGet<PaginatedSubscriptionsResponse>(`/admin/subscriptions${params}`);
       setSubscriptions(response.data.data);
     } catch (err: any) {
@@ -168,7 +168,7 @@ const SubscriptionListPage: React.FC = () => {
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Statuses</SelectItem>
+              <SelectItem value="all">All Statuses</SelectItem>
               <SelectItem value="PENDING_APPROVAL">Pending Approval</SelectItem>
               <SelectItem value="ACTIVE">Active</SelectItem>
               <SelectItem value="EXPIRED">Expired</SelectItem>
