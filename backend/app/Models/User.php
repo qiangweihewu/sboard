@@ -21,6 +21,7 @@ class User extends Authenticatable implements JWTSubject
     protected $fillable = [
         'email',
         'password',
+        'role_id',
         'is_active',
     ];
 
@@ -43,6 +44,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return [
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
     }
 
@@ -63,11 +65,28 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getJWTCustomClaims()
     {
-        return []; // Add custom claims here if needed later (e.g., role)
+        return [];
     }
 
     public function role()
     {
-        return $this->belongsTo(\App\Models\Role::class);
+        return $this->belongsTo(Role::class);
+    }
+
+    public function userGroups()
+    {
+        return $this->belongsToMany(UserGroup::class, 'user_user_group', 'user_id', 'group_id');
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(UserSubscription::class);
+    }
+
+    public function activeSubscriptions()
+    {
+        return $this->subscriptions()->where('status', 'ACTIVE')
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now());
     }
 }
