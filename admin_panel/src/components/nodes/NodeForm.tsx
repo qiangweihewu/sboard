@@ -2,10 +2,11 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  AddNodeFormValues, addNodeFormSchema,
-  EditNodeFormValues, editNodeFormSchema
+import type {
+  AddNodeFormValues, 
+  EditNodeFormValues
 } from '@/lib/validators/nodeValidator';
+import { addNodeFormSchema, editNodeFormSchema } from '@/lib/validators/nodeValidator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea'; // For config_url if it's long
