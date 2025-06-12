@@ -1,7 +1,7 @@
 // src/pages/Users/UserListPage.tsx
 import React, { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import UserTable, { UserData } from '@/components/users/UserTable';
+import UserTable, { type UserData } from '@/components/users/UserTable';
 import UserForm from '@/components/users/UserForm';
 import type { RoleOption } from '@/components/users/UserForm';
 import { UserFormValues } from '@/lib/validators/userValidator';
