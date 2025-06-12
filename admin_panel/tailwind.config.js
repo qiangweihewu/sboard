@@ -6,7 +6,12 @@ export default {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
-    './index.html'
+    './index.html',
+    // 确保包含所有可能的文件
+    './src/**/*.{js,jsx,ts,tsx}',
+    './src/components/**/*.{js,jsx,ts,tsx}',
+    './src/pages/**/*.{js,jsx,ts,tsx}',
+    './src/layouts/**/*.{js,jsx,ts,tsx}'
   ],
   prefix: "",
   theme: {
