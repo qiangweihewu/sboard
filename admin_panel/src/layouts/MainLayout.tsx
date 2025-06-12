@@ -38,6 +38,10 @@ const MainLayout: React.FC = () => {
   const location = useLocation();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
+  console.log('🏗️ MainLayout rendering...');
+  console.log('Current user:', user);
+  console.log('Current location:', location.pathname);
+
   const navigationGroups = [
     {
       title: "Overview",
