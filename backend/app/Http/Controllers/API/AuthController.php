@@ -8,24 +8,18 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
-use Tymon\JWTAuth\Facades\JWTAuth; // Correct facade
+use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller
 {
-    public function __construct()
-    {
-        // Apply auth:api middleware to all methods except register and login
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
-    }
-
     public function register(Request $request)
     {
         Log::info('Register attempt', ['email' => $request->email]);
         
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed', // password_confirmation field
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
         if ($validator->fails()) {
@@ -36,8 +30,7 @@ class AuthController extends Controller
         $user = User::create([
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'is_active' => true, // Or based on business logic, e.g., email verification needed
-            // 'role_id' => default_user_role_id, // Assign a default role if applicable
+            'is_active' => true,
         ]);
 
         Log::info('User registered successfully', ['user_id' => $user->id]);
@@ -68,7 +61,7 @@ class AuthController extends Controller
             
             $user = JWTAuth::user();
             if (!$user->is_active) {
-                JWTAuth::invalidate($token); // Invalidate token if user is not active
+                JWTAuth::invalidate($token);
                 Log::warning('Login failed - user inactive', ['email' => $request->email]);
                 return response()->json(['error' => 'Unauthorized: User account is inactive.'], 401);
             }
@@ -118,7 +111,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => JWTAuth::factory()->getTTL() * 60 // Default is 1 hour (60 minutes)
+            'expires_in' => JWTAuth::factory()->getTTL() * 60
         ]);
     }
 }
