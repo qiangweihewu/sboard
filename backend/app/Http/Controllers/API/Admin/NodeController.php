@@ -7,17 +7,17 @@ use App\Models\Node;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Exception; // Added for explicit Exception handling
+use Exception;
 
 class NodeController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Placeholder - to be implemented later
-        return response()->json(['message' => 'Node index not implemented yet.']);
+        $nodes = Node::paginate($request->input('per_page', 15));
+        return response()->json($nodes);
     }
 
     /**
@@ -27,7 +27,7 @@ class NodeController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'config_url' => 'required|string',
-            'name' => 'sometimes|string|max:255', // Optional: user can override name
+            'name' => 'sometimes|string|max:255',
             'tags' => 'sometimes|array',
             'is_active' => 'sometimes|boolean',
         ]);
@@ -38,7 +38,6 @@ class NodeController extends Controller
 
         $configUrl = $request->input('config_url');
         $nodeData = null;
-        // $protocolType = null; // Not used in the provided snippet, can be removed or used for logging
 
         // Attempt to parse as VLESS
         if (Str::startsWith($configUrl, 'vless://')) {
@@ -58,20 +57,17 @@ class NodeController extends Controller
                     'address' => $parsedUrl['host'],
                     'port' => (int)$parsedUrl['port'],
                     'protocol_specific_config' => [
-                        'uuid' => $parsedUrl['user'], // UUID is in the user part
+                        'uuid' => $parsedUrl['user'],
                         'encryption' => $queryParams['encryption'] ?? 'none',
-                        'security' => $queryParams['security'] ?? null, // tls, xtls
-                        'type' => $queryParams['type'] ?? null, // tcp, kcp, ws, http, quic
+                        'security' => $queryParams['security'] ?? null,
+                        'type' => $queryParams['type'] ?? null,
                         'flow' => $queryParams['flow'] ?? null,
                         'path' => $queryParams['path'] ?? null,
-                        'host' => $queryParams['host'] ?? null, // 'host' is often used for HTTP headers in WS
-                        'sni' => $queryParams['sni'] ?? $queryParams['host'] ?? null, // SNI for TLS
-                        // Add other VLESS params as needed from query
+                        'host' => $queryParams['host'] ?? null,
+                        'sni' => $queryParams['sni'] ?? $queryParams['host'] ?? null,
                     ],
-                    // Name: use provided 'name', then fragment, then auto-generate
                     'name' => $request->input('name', rawurldecode($parsedUrl['fragment'] ?? 'VLESS Node ' . Str::random(4))),
                 ];
-                // $protocolType = 'VLESS';
             } catch (Exception $e) {
                 // Not a valid VLESS or parsing failed, try VMess
             }
@@ -95,24 +91,21 @@ class NodeController extends Controller
                     'address' => $vmessConfig['add'],
                     'port' => (int)$vmessConfig['port'],
                     'protocol_specific_config' => [
-                        'id' => $vmessConfig['id'], // UUID
+                        'id' => $vmessConfig['id'],
                         'alterId' => $vmessConfig['aid'] ?? 0,
-                        'security' => $vmessConfig['scy'] ?? $vmessConfig['security'] ?? 'auto', // 'security' is old, 'scy' is new
-                        'net' => $vmessConfig['net'] ?? 'tcp', // tcp, kcp, ws, http, quic
-                        'vmess_type' => $vmessConfig['type'] ?? 'none', // http, kcp, etc. (header type for obfuscation)
+                        'security' => $vmessConfig['scy'] ?? $vmessConfig['security'] ?? 'auto',
+                        'net' => $vmessConfig['net'] ?? 'tcp',
+                        'vmess_type' => $vmessConfig['type'] ?? 'none',
                         'host' => $vmessConfig['host'] ?? null,
                         'path' => $vmessConfig['path'] ?? null,
-                        'tls' => $vmessConfig['tls'] ?? 'none', // 'tls' or 'none'
+                        'tls' => $vmessConfig['tls'] ?? 'none',
                         'sni' => $vmessConfig['sni'] ?? $vmessConfig['host'] ?? null,
-                        'v' => $vmessConfig['v'] ?? '2', // Vmess version
+                        'v' => $vmessConfig['v'] ?? '2',
                     ],
-                    // Name: use provided 'name', then 'ps' or 'remarks' from config, then auto-generate
                     'name' => $request->input('name', $vmessConfig['ps'] ?? $vmessConfig['remarks'] ?? 'VMess Node ' . Str::random(4)),
                 ];
-                // $protocolType = 'VMESS';
             } catch (Exception $e) {
-                // Parsing VMess failed
-                 return response()->json(['error' => 'Failed to parse VMess configuration: ' . $e->getMessage()], 400);
+                return response()->json(['error' => 'Failed to parse VMess configuration: ' . $e->getMessage()], 400);
             }
         }
 
@@ -120,10 +113,9 @@ class NodeController extends Controller
             return response()->json(['error' => 'Unsupported or invalid node configuration URL. Only VLESS and VMess URIs are currently supported.'], 400);
         }
 
-        // Merge optional user inputs that were not handled during initial parsing
-        $nodeData['name'] = $request->input('name', $nodeData['name']); // Ensures request 'name' takes precedence if nodeData['name'] was set by fragment/ps
-        $nodeData['tags'] = $request->input('tags', $nodeData['tags'] ?? []); // Default to empty array if not provided by request or parser
-        $nodeData['is_active'] = $request->input('is_active', $nodeData['is_active'] ?? true); // Default to true
+        $nodeData['name'] = $request->input('name', $nodeData['name']);
+        $nodeData['tags'] = $request->input('tags', $nodeData['tags'] ?? []);
+        $nodeData['is_active'] = $request->input('is_active', $nodeData['is_active'] ?? true);
 
         $node = Node::create($nodeData);
 
@@ -133,29 +125,37 @@ class NodeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Node $node)
     {
-        // Placeholder - to be implemented later
-        // Example: $node = Node::findOrFail($id); return response()->json($node);
-        return response()->json(['message' => "Node show method for id {$id} not implemented yet."]);
+        return response()->json($node);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Node $node)
     {
-        // Placeholder - to be implemented later
-        return response()->json(['message' => "Node update method for id {$id} not implemented yet."]);
+        $validator = Validator::make($request->all(), [
+            'name' => 'sometimes|string|max:255',
+            'tags' => 'sometimes|array',
+            'is_active' => 'sometimes|boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $node->update($validator->validated());
+
+        return response()->json($node);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Node $node)
     {
-        // Placeholder - to be implemented later
-        // Example: $node = Node::findOrFail($id); $node->delete(); return response()->json(null, 204);
-        return response()->json(['message' => "Node destroy method for id {$id} not implemented yet."]);
+        $node->delete();
+        return response()->json(null, 204);
     }
 }
