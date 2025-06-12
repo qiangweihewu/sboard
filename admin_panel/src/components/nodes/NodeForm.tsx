@@ -55,10 +55,10 @@ const NodeForm: React.FC<NodeFormProps> = ({
       form.reset(preparedInitialData as CurrentFormValues); // Cast to CurrentFormValues
     } else {
       // Reset to default based on mode if initialData is not present (e.g. opening "add" form after "edit")
-      form.reset(isEditMode
+      form.reset((isEditMode
         ? { name: '', tags: '', is_active: true }
         : { config_url: '', name: '', tags: '', is_active: true }
-      as CurrentFormValues); // Cast to CurrentFormValues
+      ) as CurrentFormValues); // Cast to CurrentFormValues
     }
   }, [initialData, form, isEditMode]);
 
