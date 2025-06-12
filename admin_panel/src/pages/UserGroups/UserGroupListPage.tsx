@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import UserGroupTable, { UserGroupData } from '@/components/user_groups/UserGroupTable';
 import UserGroupForm from '@/components/user_groups/UserGroupForm';
 import { UserGroupFormValues } from '@/lib/validators/userGroupValidator';
-import { get as apiGet, post as apiPost, put as apiPut } from '@/services/api'; // Add apiPut
+import { get as apiGet, post as apiPost, put as apiPut, del as apiDel } from '@/services/api'; // Add apiDel
 import {
   Dialog,
   DialogContent,
@@ -13,6 +13,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  // AlertDialogTrigger, // Not used directly here
+} from "@/components/ui/alert-dialog"; // Import AlertDialog components
 
 interface PaginatedUserGroupsResponse {
   data: UserGroupData[];
@@ -28,10 +39,14 @@ const UserGroupListPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [isAddGroupDialogOpen, setIsAddGroupDialogOpen] = useState(false);
-  const [isEditGroupDialogOpen, setIsEditGroupDialogOpen] = useState(false); // New state
-  const [editingGroup, setEditingGroup] = useState<UserGroupData | null>(null); // New state
+  const [isEditGroupDialogOpen, setIsEditGroupDialogOpen] = useState(false);
+  const [editingGroup, setEditingGroup] = useState<UserGroupData | null>(null);
+
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false); // For delete confirmation
+  const [groupToDelete, setGroupToDelete] = useState<UserGroupData | null>(null); // Group to be deleted
 
   const [formSubmitting, setFormSubmitting] = useState(false);
+  const [deleteSubmitting, setDeleteSubmitting] = useState(false); // For delete operation
 
   const fetchUserGroups = useCallback(async () => {
     setIsLoading(true);
@@ -74,13 +89,12 @@ const UserGroupListPage: React.FC = () => {
       await apiPut(`/admin/user-groups/${editingGroup.id}`, values);
       setIsEditGroupDialogOpen(false);
       setEditingGroup(null);
-      fetchUserGroups(); // Refresh user group list
+      fetchUserGroups();
       console.log("User group updated successfully");
-      // Add toast notification here if desired
     } catch (err: any) {
       console.error("Failed to update user group:", err);
       const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || "Failed to update user group.";
-      alert("Error updating user group: " + errorMessage); // Simple alert for now
+      alert("Error updating user group: " + errorMessage);
     } finally {
       setFormSubmitting(false);
     }
@@ -91,9 +105,29 @@ const UserGroupListPage: React.FC = () => {
     setIsEditGroupDialogOpen(true);
   };
 
-  const handleDeleteGroup = (group: UserGroupData) => {
-    console.log('Delete group action triggered:', group);
-    // TODO: Implement logic for delete confirmation and API call for user groups
+  // Updated handleDeleteGroup to openDeleteConfirmationDialog
+  const openDeleteConfirmationDialog = (group: UserGroupData) => {
+    setGroupToDelete(group);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteGroup = async () => {
+    if (!groupToDelete) return;
+    setDeleteSubmitting(true);
+    try {
+      await apiDel(`/admin/user-groups/${groupToDelete.id}`);
+      setIsDeleteDialogOpen(false);
+      setGroupToDelete(null);
+      fetchUserGroups(); // Refresh user group list
+      console.log("User group deleted successfully");
+      // Add toast notification here if desired
+    } catch (err: any) {
+      console.error("Failed to delete user group:", err);
+      const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || "Failed to delete user group.";
+      alert("Error deleting user group: " + errorMessage); // Simple alert for now
+    } finally {
+      setDeleteSubmitting(false);
+    }
   };
 
   return (
@@ -102,20 +136,20 @@ const UserGroupListPage: React.FC = () => {
         <h1 className="text-3xl font-bold">User Group Management</h1>
         {/* Add User Group Dialog Trigger - existing */}
         <Dialog open={isAddGroupDialogOpen} onOpenChange={setIsAddGroupDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>Add New User Group</Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Add New User Group</DialogTitle>
-              <DialogDescription>Fill in the details to create a new user group.</DialogDescription>
-            </DialogHeader>
-            <UserGroupForm
-              onSubmit={handleAddGroupSubmit}
-              isEditMode={false}
-              isLoading={formSubmitting}
-            />
-          </DialogContent>
+            <DialogTrigger asChild>
+               <Button>Add New User Group</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+               <DialogHeader>
+                 <DialogTitle>Add New User Group</DialogTitle>
+                 <DialogDescription>Fill in the details to create a new user group.</DialogDescription>
+               </DialogHeader>
+               <UserGroupForm
+                 onSubmit={handleAddGroupSubmit}
+                 isEditMode={false}
+                 isLoading={formSubmitting}
+               />
+            </DialogContent>
         </Dialog>
       </div>
 
@@ -125,33 +159,55 @@ const UserGroupListPage: React.FC = () => {
       {!isLoading && !error && (
         <UserGroupTable
           userGroups={userGroups}
-          onEdit={openEditGroupDialog} // Connect UserGroupTable's onEdit
-          onDelete={handleDeleteGroup}
+          onEdit={openEditGroupDialog}
+          onDelete={openDeleteConfirmationDialog} // Connect UserGroupTable's onDelete
         />
       )}
 
-      {/* Edit User Group Dialog */}
+      {/* Edit User Group Dialog - existing */}
       {editingGroup && (
-        <Dialog open={isEditGroupDialogOpen} onOpenChange={(isOpen) => {
-            setIsEditGroupDialogOpen(isOpen);
-            if (!isOpen) setEditingGroup(null); // Clear editing group when dialog closes
-        }}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Edit User Group: {editingGroup.name}</DialogTitle>
-              <DialogDescription>Update the user group's details below.</DialogDescription>
-            </DialogHeader>
-            <UserGroupForm
-              onSubmit={handleEditGroupSubmit}
-              isEditMode={true}
-              initialData={{ // Pass existing data to the form
-                  name: editingGroup.name,
-                  description: editingGroup.description || '',
-              }}
-              isLoading={formSubmitting}
-            />
-          </DialogContent>
-        </Dialog>
+         <Dialog open={isEditGroupDialogOpen} onOpenChange={(isOpen) => {
+             setIsEditGroupDialogOpen(isOpen);
+             if (!isOpen) setEditingGroup(null);
+         }}>
+             <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Edit User Group: {editingGroup.name}</DialogTitle>
+                  <DialogDescription>Update the user group's details below.</DialogDescription>
+                </DialogHeader>
+                <UserGroupForm
+                  onSubmit={handleEditGroupSubmit}
+                  isEditMode={true}
+                  initialData={{
+                      name: editingGroup.name,
+                      description: editingGroup.description || '',
+                  }}
+                  isLoading={formSubmitting}
+                />
+            </DialogContent>
+         </Dialog>
+      )}
+
+      {/* Delete User Group Confirmation Dialog */}
+      {groupToDelete && (
+        <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete the user group "{groupToDelete.name}"? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setGroupToDelete(null)} disabled={deleteSubmitting}>
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction onClick={confirmDeleteGroup} disabled={deleteSubmitting} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground">
+                {deleteSubmitting ? 'Deleting...' : 'Delete'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
     </div>
   );
