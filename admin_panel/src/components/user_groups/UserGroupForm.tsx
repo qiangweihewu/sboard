@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { UserGroupFormValues, userGroupFormSchema } from '@/lib/validators/userGroupValidator'; // Adjust path if needed
+import { userGroupFormSchema, type UserGroupFormValues } from '@/lib/validators/userGroupValidator'; // Adjust path if needed
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea'; // Import Textarea
