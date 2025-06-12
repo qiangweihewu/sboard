@@ -2,6 +2,12 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+// Test route to verify API is working
+Route::get('/test', function () {
+    return response()->json(['message' => 'API is working']);
+});
+
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\Admin\UserController;
 use App\Http\Controllers\API\Admin\UserGroupController;

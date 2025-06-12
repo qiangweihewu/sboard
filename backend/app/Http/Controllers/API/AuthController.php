@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth; // Correct facade
 use Tymon\JWTAuth\Exceptions\JWTException;
 
@@ -20,12 +21,15 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+        Log::info('Register attempt', ['email' => $request->email]);
+        
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed', // password_confirmation field
         ]);
 
         if ($validator->fails()) {
+            Log::warning('Registration validation failed', $validator->errors()->toArray());
             return response()->json($validator->errors(), 400);
         }
 
@@ -36,41 +40,49 @@ class AuthController extends Controller
             // 'role_id' => default_user_role_id, // Assign a default role if applicable
         ]);
 
-        // Optionally log the user in and return a token immediately
-        // $token = JWTAuth::fromUser($user);
-        // return $this->respondWithToken($token);
-
+        Log::info('User registered successfully', ['user_id' => $user->id]);
         return response()->json(['message' => 'User successfully registered'], 201);
     }
 
     public function login(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $credentials = $request->only('email', 'password');
-
+        Log::info('Login attempt', ['email' => $request->email]);
+        
         try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email',
+                'password' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                Log::warning('Login validation failed', $validator->errors()->toArray());
+                return response()->json($validator->errors(), 422);
+            }
+
+            $credentials = $request->only('email', 'password');
+
             if (! $token = JWTAuth::attempt($credentials)) {
+                Log::warning('Login failed - invalid credentials', ['email' => $request->email]);
                 return response()->json(['error' => 'Unauthorized: Invalid credentials'], 401);
             }
+            
+            $user = JWTAuth::user();
+            if (!$user->is_active) {
+                JWTAuth::invalidate($token); // Invalidate token if user is not active
+                Log::warning('Login failed - user inactive', ['email' => $request->email]);
+                return response()->json(['error' => 'Unauthorized: User account is inactive.'], 401);
+            }
+
+            Log::info('Login successful', ['user_id' => $user->id]);
+            return $this->respondWithToken($token);
+            
         } catch (JWTException $e) {
+            Log::error('JWT Exception during login', ['error' => $e->getMessage()]);
             return response()->json(['error' => 'Could not create token'], 500);
+        } catch (\Exception $e) {
+            Log::error('Unexpected error during login', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Internal server error'], 500);
         }
-
-        $user = JWTAuth::user();
-        if (!$user->is_active) {
-            JWTAuth::invalidate($token); // Invalidate token if user is not active
-            return response()->json(['error' => 'Unauthorized: User account is inactive.'], 401);
-        }
-
-        return $this->respondWithToken($token);
     }
 
     public function logout()
