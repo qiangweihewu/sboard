@@ -18,7 +18,13 @@ import {
   CheckCircle,
   Clock,
   ArrowUpRight,
-  RefreshCw
+  RefreshCw,
+  Zap,
+  Globe,
+  Database,
+  Wifi,
+  Shield,
+  BarChart3
 } from 'lucide-react';
 
 interface PaginatedResponseWithTotal {
@@ -45,7 +51,7 @@ const DashboardPage: React.FC = () => {
   const [errorStats, setErrorStats] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
-  // Mock recent activities
+  // Enhanced recent activities with more realistic data
   const [recentActivities] = useState<RecentActivity[]>([
     {
       id: '1',
@@ -57,7 +63,7 @@ const DashboardPage: React.FC = () => {
     {
       id: '2',
       type: 'subscription',
-      message: 'Subscription approved for Premium Plan',
+      message: 'Premium Plan subscription approved',
       timestamp: '5 minutes ago',
       status: 'success'
     },
@@ -74,6 +80,13 @@ const DashboardPage: React.FC = () => {
       message: 'Daily backup completed successfully',
       timestamp: '1 hour ago',
       status: 'info'
+    },
+    {
+      id: '5',
+      type: 'subscription',
+      message: 'Traffic limit warning for user@test.com',
+      timestamp: '2 hours ago',
+      status: 'warning'
     }
   ]);
 
@@ -126,10 +139,10 @@ const DashboardPage: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'success': return 'text-green-600 bg-green-50 border-green-200';
-      case 'warning': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-      case 'error': return 'text-red-600 bg-red-50 border-red-200';
-      default: return 'text-blue-600 bg-blue-50 border-blue-200';
+      case 'success': return 'text-green-600 bg-green-50 border-green-200 dark:bg-green-900/20 dark:text-green-400';
+      case 'warning': return 'text-yellow-600 bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-400';
+      case 'error': return 'text-red-600 bg-red-50 border-red-200 dark:bg-red-900/20 dark:text-red-400';
+      default: return 'text-blue-600 bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400';
     }
   };
 
@@ -139,52 +152,60 @@ const DashboardPage: React.FC = () => {
       description: 'Add, edit, or manage user accounts',
       href: '/users',
       icon: Users,
-      color: 'from-blue-500 to-blue-600'
+      color: 'from-emerald-500 to-emerald-600',
+      stats: userCount
     },
     {
       title: 'Configure Nodes',
       description: 'Add new nodes or manage existing ones',
       href: '/nodes',
       icon: Server,
-      color: 'from-green-500 to-green-600'
+      color: 'from-orange-500 to-orange-600',
+      stats: nodeCount
     },
     {
       title: 'Create Plans',
       description: 'Set up subscription plans and pricing',
       href: '/plans',
       icon: Package,
-      color: 'from-purple-500 to-purple-600'
+      color: 'from-purple-500 to-purple-600',
+      stats: planCount
     },
     {
       title: 'User Groups',
       description: 'Organize users into groups',
       href: '/user-groups',
       icon: UserCheck,
-      color: 'from-orange-500 to-orange-600'
+      color: 'from-teal-500 to-teal-600',
+      stats: groupCount
     }
   ];
 
   return (
     <div className="space-y-8">
-      {/* Header */}
+      {/* Enhanced Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent dark:from-slate-100 dark:to-slate-300">
+          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 bg-clip-text text-transparent dark:from-slate-100 dark:via-blue-300 dark:to-purple-300">
             Dashboard
           </h1>
-          <p className="text-slate-600 dark:text-slate-400 mt-2">
-            Welcome back, {user?.email}! Here's what's happening with your system.
+          <p className="text-slate-600 dark:text-slate-400 mt-2 text-lg">
+            Welcome back, <span className="font-semibold text-blue-600 dark:text-blue-400">{user?.email}</span>! Here's what's happening with your system.
           </p>
         </div>
-        <div className="flex items-center space-x-3">
-          <p className="text-sm text-slate-500">
-            Last updated: {lastUpdated.toLocaleTimeString()}
-          </p>
+        <div className="flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-2 px-3 py-2 rounded-lg bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20">
+            <Clock className="w-4 h-4 text-slate-500" />
+            <span className="text-sm text-slate-600 dark:text-slate-400">
+              Last updated: {lastUpdated.toLocaleTimeString()}
+            </span>
+          </div>
           <Button 
             onClick={fetchDashboardStats} 
             variant="outline" 
             size="sm"
             disabled={isLoadingStats}
+            className="bg-white/60 backdrop-blur-sm border-white/20 hover:bg-white/80"
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${isLoadingStats ? 'animate-spin' : ''}`} />
             Refresh
@@ -194,17 +215,20 @@ const DashboardPage: React.FC = () => {
 
       {/* Error Alert */}
       {errorStats && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-950">
+        <div className="rounded-xl border border-red-200 bg-gradient-to-r from-red-50 to-pink-50 p-6 dark:border-red-800 dark:from-red-950 dark:to-pink-950 shadow-lg">
           <div className="flex items-center">
-            <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
-            <p className="ml-3 text-sm text-red-800 dark:text-red-200">
-              Error loading statistics: {errorStats}
-            </p>
+            <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/50">
+              <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+            </div>
+            <div className="ml-4">
+              <h3 className="text-sm font-medium text-red-800 dark:text-red-200">Error loading statistics</h3>
+              <p className="text-sm text-red-700 dark:text-red-300 mt-1">{errorStats}</p>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Stats Grid */}
+      {/* Enhanced Stats Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <SummaryCard 
           title="Total Users" 
@@ -213,6 +237,7 @@ const DashboardPage: React.FC = () => {
           icon={Users}
           trend="+12%"
           trendDirection="up"
+          description="vs last month"
         />
         <SummaryCard 
           title="User Groups" 
@@ -221,6 +246,7 @@ const DashboardPage: React.FC = () => {
           icon={UserCheck}
           trend="+5%"
           trendDirection="up"
+          description="vs last month"
         />
         <SummaryCard 
           title="Active Plans" 
@@ -229,6 +255,7 @@ const DashboardPage: React.FC = () => {
           icon={Package}
           trend="0%"
           trendDirection="neutral"
+          description="no change"
         />
         <SummaryCard 
           title="Server Nodes" 
@@ -237,40 +264,55 @@ const DashboardPage: React.FC = () => {
           icon={Server}
           trend="+2"
           trendDirection="up"
+          description="new this week"
         />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* Recent Activity */}
+        {/* Enhanced Recent Activity */}
         <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Activity className="mr-2 h-5 w-5" />
-                Recent Activity
-              </CardTitle>
-              <CardDescription>
-                Latest system events and user actions
-              </CardDescription>
+          <Card className="bg-white/60 backdrop-blur-xl border-white/20 shadow-xl">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                    <Activity className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl">Recent Activity</CardTitle>
+                    <CardDescription>Latest system events and user actions</CardDescription>
+                  </div>
+                </div>
+                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                  Live
+                </Badge>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentActivities.map((activity) => {
+                {recentActivities.map((activity, index) => {
                   const Icon = getActivityIcon(activity.type);
                   return (
-                    <div key={activity.id} className="flex items-start space-x-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                      <div className={`p-2 rounded-full ${getStatusColor(activity.status)}`}>
+                    <div key={activity.id} className={`flex items-start space-x-4 p-4 rounded-xl transition-all duration-200 hover:shadow-md ${
+                      index === 0 ? 'bg-blue-50/50 dark:bg-blue-900/20 border border-blue-200/50' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                    }`}>
+                      <div className={`p-2 rounded-lg ${getStatusColor(activity.status)}`}>
                         <Icon className="h-4 w-4" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
                           {activity.message}
                         </p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center mt-1">
-                          <Clock className="h-3 w-3 mr-1" />
-                          {activity.timestamp}
-                        </p>
+                        <div className="flex items-center mt-1 space-x-2">
+                          <Clock className="h-3 w-3 text-slate-400" />
+                          <span className="text-xs text-slate-500 dark:text-slate-400">
+                            {activity.timestamp}
+                          </span>
+                        </div>
                       </div>
+                      {index === 0 && (
+                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                      )}
                     </div>
                   );
                 })}
@@ -279,53 +321,118 @@ const DashboardPage: React.FC = () => {
           </Card>
         </div>
 
-        {/* System Status */}
-        <div>
-          <Card>
+        {/* Enhanced System Status */}
+        <div className="space-y-6">
+          <Card className="bg-white/60 backdrop-blur-xl border-white/20 shadow-xl">
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <TrendingUp className="mr-2 h-5 w-5" />
-                System Status
-              </CardTitle>
+              <div className="flex items-center space-x-3">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 text-white">
+                  <TrendingUp className="h-5 w-5" />
+                </div>
+                <CardTitle>System Status</CardTitle>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">API Status</span>
-                <Badge className="bg-green-100 text-green-800 border-green-200">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-green-50 dark:bg-green-900/20">
+                <div className="flex items-center space-x-3">
+                  <Zap className="h-4 w-4 text-green-600 dark:text-green-400" />
+                  <span className="text-sm font-medium">API Status</span>
+                </div>
+                <Badge className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/50 dark:text-green-400">
                   <CheckCircle className="h-3 w-3 mr-1" />
                   Operational
                 </Badge>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Database</span>
-                <Badge className="bg-green-100 text-green-800 border-green-200">
+              
+              <div className="flex items-center justify-between p-3 rounded-lg bg-green-50 dark:bg-green-900/20">
+                <div className="flex items-center space-x-3">
+                  <Database className="h-4 w-4 text-green-600 dark:text-green-400" />
+                  <span className="text-sm font-medium">Database</span>
+                </div>
+                <Badge className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/50 dark:text-green-400">
                   <CheckCircle className="h-3 w-3 mr-1" />
                   Healthy
                 </Badge>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Node Health</span>
-                <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
+              
+              <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/20">
+                <div className="flex items-center space-x-3">
+                  <Wifi className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+                  <span className="text-sm font-medium">Node Health</span>
+                </div>
+                <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-400">
                   <AlertTriangle className="h-3 w-3 mr-1" />
                   1 Issue
                 </Badge>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Uptime</span>
-                <span className="text-sm font-medium text-slate-900 dark:text-slate-100">99.9%</span>
+              
+              <div className="flex items-center justify-between p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+                <div className="flex items-center space-x-3">
+                  <Globe className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  <span className="text-sm font-medium">Uptime</span>
+                </div>
+                <span className="text-sm font-semibold text-blue-700 dark:text-blue-400">99.9%</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Performance Metrics */}
+          <Card className="bg-white/60 backdrop-blur-xl border-white/20 shadow-xl">
+            <CardHeader>
+              <div className="flex items-center space-x-3">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
+                  <BarChart3 className="h-5 w-5" />
+                </div>
+                <CardTitle>Performance</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-600 dark:text-slate-400">CPU Usage</span>
+                  <span className="font-medium">23%</span>
+                </div>
+                <div className="w-full bg-slate-200 rounded-full h-2 dark:bg-slate-700">
+                  <div className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full" style={{width: '23%'}}></div>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-600 dark:text-slate-400">Memory</span>
+                  <span className="font-medium">67%</span>
+                </div>
+                <div className="w-full bg-slate-200 rounded-full h-2 dark:bg-slate-700">
+                  <div className="bg-gradient-to-r from-emerald-500 to-teal-600 h-2 rounded-full" style={{width: '67%'}}></div>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-600 dark:text-slate-400">Storage</span>
+                  <span className="font-medium">45%</span>
+                </div>
+                <div className="w-full bg-slate-200 rounded-full h-2 dark:bg-slate-700">
+                  <div className="bg-gradient-to-r from-orange-500 to-red-500 h-2 rounded-full" style={{width: '45%'}}></div>
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <Card>
+      {/* Enhanced Quick Actions */}
+      <Card className="bg-white/60 backdrop-blur-xl border-white/20 shadow-xl">
         <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-          <CardDescription>
-            Common administrative tasks and shortcuts
-          </CardDescription>
+          <div className="flex items-center space-x-3">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 text-white">
+              <Zap className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle className="text-xl">Quick Actions</CardTitle>
+              <CardDescription>Common administrative tasks and shortcuts</CardDescription>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -335,22 +442,30 @@ const DashboardPage: React.FC = () => {
                 <Link
                   key={action.href}
                   to={action.href}
-                  className="group relative overflow-hidden rounded-lg border p-6 hover:shadow-lg transition-all duration-200 hover:border-slate-300 dark:hover:border-slate-600"
+                  className="group relative overflow-hidden rounded-xl border border-white/20 p-6 hover:shadow-xl transition-all duration-300 hover:scale-[1.02] bg-white/40 backdrop-blur-sm hover:bg-white/60"
                 >
-                  <div className="flex items-center space-x-3">
-                    <div className={`p-2 rounded-lg bg-gradient-to-br ${action.color} text-white`}>
-                      <Icon className="h-5 w-5" />
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`p-3 rounded-xl bg-gradient-to-br ${action.color} text-white shadow-lg group-hover:shadow-xl transition-shadow`}>
+                      <Icon className="h-6 w-6" />
                     </div>
-                    <ArrowUpRight className="h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
+                    <div className="flex items-center space-x-2">
+                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                        {action.stats}
+                      </Badge>
+                      <ArrowUpRight className="h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
+                    </div>
                   </div>
-                  <div className="mt-4">
-                    <h3 className="font-semibold text-slate-900 dark:text-slate-100 group-hover:text-slate-700 dark:group-hover:text-slate-300">
+                  <div>
+                    <h3 className="font-semibold text-slate-900 dark:text-slate-100 group-hover:text-slate-700 dark:group-hover:text-slate-300 mb-2">
                       {action.title}
                     </h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
                       {action.description}
                     </p>
                   </div>
+                  
+                  {/* Decorative gradient */}
+                  <div className={`absolute top-0 right-0 w-20 h-20 bg-gradient-to-br ${action.color} opacity-10 rounded-full -translate-y-10 translate-x-10 group-hover:opacity-20 transition-opacity`} />
                 </Link>
               );
             })}

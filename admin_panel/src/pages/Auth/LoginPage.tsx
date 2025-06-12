@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
-import { Shield, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Shield, Eye, EyeOff, Loader2, Sparkles, Lock, Mail } from 'lucide-react';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -43,52 +43,66 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 dark:from-slate-900 dark:via-blue-900 dark:to-purple-900 p-4 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full opacity-20 animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-400 to-pink-600 rounded-full opacity-20 animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-indigo-400 to-blue-600 rounded-full opacity-10 animate-pulse delay-500"></div>
+      </div>
+      
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25 dark:[mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))]" />
       
-      <Card className="w-full max-w-md relative z-10 shadow-2xl border-0 bg-white/80 backdrop-blur-sm dark:bg-slate-900/80">
-        <CardHeader className="space-y-4 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-purple-600 shadow-lg">
-            <Shield className="h-8 w-8 text-white" />
+      <Card className="w-full max-w-md relative z-10 shadow-2xl border-0 bg-white/80 backdrop-blur-xl dark:bg-slate-900/80">
+        <CardHeader className="space-y-6 text-center pb-8">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600 shadow-2xl relative">
+            <Shield className="h-10 w-10 text-white" />
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 opacity-75 animate-pulse"></div>
+            <Sparkles className="absolute -top-1 -right-1 h-4 w-4 text-yellow-400 animate-bounce" />
           </div>
           <div>
-            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Admin Login
+            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              Welcome Back
             </CardTitle>
-            <CardDescription className="text-slate-600 dark:text-slate-400">
+            <CardDescription className="text-slate-600 dark:text-slate-400 mt-2 text-lg">
               Sign in to access the Xray Node Manager
             </CardDescription>
           </div>
         </CardHeader>
         
-        <CardContent>
+        <CardContent className="space-y-6">
           {error && (
-            <Alert className="mb-6 border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
+            <Alert className="border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200 rounded-xl">
+              <AlertTriangle className="h-4 w-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
           
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium">
-                Email Address
+              <Label htmlFor="email" className="text-sm font-medium flex items-center space-x-2">
+                <Mail className="h-4 w-4 text-slate-500" />
+                <span>Email Address</span>
               </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="admin@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={isLoading}
-                className="h-11 transition-all duration-200 focus:ring-2 focus:ring-blue-500/20"
-              />
+              <div className="relative">
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="admin@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={isLoading}
+                  className="h-12 pl-4 pr-4 transition-all duration-200 focus:ring-2 focus:ring-blue-500/20 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm"
+                />
+              </div>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium">
-                Password
+              <Label htmlFor="password" className="text-sm font-medium flex items-center space-x-2">
+                <Lock className="h-4 w-4 text-slate-500" />
+                <span>Password</span>
               </Label>
               <div className="relative">
                 <Input
@@ -99,7 +113,7 @@ const LoginPage: React.FC = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   disabled={isLoading}
-                  className="h-11 pr-10 transition-all duration-200 focus:ring-2 focus:ring-blue-500/20"
+                  className="h-12 pl-4 pr-12 transition-all duration-200 focus:ring-2 focus:ring-blue-500/20 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm"
                 />
                 <Button
                   type="button"
@@ -120,7 +134,7 @@ const LoginPage: React.FC = () => {
             
             <Button 
               type="submit" 
-              className="w-full h-11 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+              className="w-full h-12 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -129,15 +143,29 @@ const LoginPage: React.FC = () => {
                   Signing in...
                 </>
               ) : (
-                'Sign In'
+                <>
+                  <Shield className="mr-2 h-4 w-4" />
+                  Sign In
+                </>
               )}
             </Button>
           </form>
           
-          <div className="mt-6 text-center">
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              Default credentials: admin@example.com / password
-            </p>
+          <div className="mt-8 text-center space-y-4">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-slate-200 dark:border-slate-700" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-white dark:bg-slate-900 px-2 text-slate-500">Demo Credentials</span>
+              </div>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                <strong>Email:</strong> admin@example.com<br />
+                <strong>Password:</strong> password
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>
