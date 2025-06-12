@@ -10,8 +10,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { darkTheme } from 'naive-ui'
-import { useOsTheme } from '@vueuse/core'
+import { useColorMode } from '@vueuse/core'
 
-const osTheme = useOsTheme()
-const theme = computed(() => (osTheme.value === 'dark' ? darkTheme : null))
+const { system } = useColorMode()
+const theme = computed(() => (system.value === 'dark' ? darkTheme : null))
 </script>
