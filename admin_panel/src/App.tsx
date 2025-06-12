@@ -5,7 +5,8 @@ import DashboardPage from './pages/Dashboard/DashboardPage';
 import UserListPage from './pages/Users/UserListPage';
 import UserGroupListPage from './pages/UserGroups/UserGroupListPage';
 import PlanListPage from './pages/Plans/PlanListPage';
-import NodeListPage from './pages/Nodes/NodeListPage'; // Import NodeListPage
+import NodeListPage from './pages/Nodes/NodeListPage';
+import SubscriptionListPage from './pages/Subscriptions/SubscriptionListPage';
 import MainLayout from './layouts/MainLayout';
 import ProtectedRoute from './router/ProtectedRoute';
 import { useAuth } from './contexts/AuthContext';
@@ -24,28 +25,13 @@ function App() {
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
-          <Route element={<MainLayout />}> {/* Nest routes that use MainLayout */}
-            <Route
-              path="/"
-              element={<DashboardPage />}
-            />
-            <Route
-              path="/users"
-              element={<UserListPage />}
-            />
-            <Route
-              path="/user-groups"
-              element={<UserGroupListPage />}
-            />
-            <Route
-              path="/plans"
-              element={<PlanListPage />}
-            />
-            <Route
-              path="/nodes" // New route for Node Management
-              element={<NodeListPage />}
-            />
-            {/* Add other protected routes here */}
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<DashboardPage />} />
+            <Route path="/users" element={<UserListPage />} />
+            <Route path="/user-groups" element={<UserGroupListPage />} />
+            <Route path="/plans" element={<PlanListPage />} />
+            <Route path="/nodes" element={<NodeListPage />} />
+            <Route path="/subscriptions" element={<SubscriptionListPage />} />
           </Route>
         </Route>
 
@@ -54,4 +40,5 @@ function App() {
     </BrowserRouter>
   );
 }
+
 export default App;

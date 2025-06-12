@@ -10,7 +10,7 @@ import {
   Server, 
   LayoutDashboard,
   LogOut,
-  Menu
+  FileText
 } from 'lucide-react';
 
 const MainLayout: React.FC = () => {
@@ -23,6 +23,7 @@ const MainLayout: React.FC = () => {
     { name: 'User Groups', href: '/user-groups', icon: UserCheck },
     { name: 'Plans', href: '/plans', icon: Package },
     { name: 'Nodes', href: '/nodes', icon: Server },
+    { name: 'Subscriptions', href: '/subscriptions', icon: FileText },
   ];
 
   const isActive = (path: string) => {
@@ -40,7 +41,7 @@ const MainLayout: React.FC = () => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <h1 className="text-xl font-semibold text-gray-900">
-                Xray Node Manager
+                Xray Node Manager - Admin
               </h1>
             </div>
             
