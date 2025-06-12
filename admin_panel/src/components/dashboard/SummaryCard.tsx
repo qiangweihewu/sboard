@@ -7,13 +7,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown, Minus, LucideIcon } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import type { LucideProps } from 'lucide-react';
 
 interface SummaryCardProps {
   title: string;
   value: string | number;
   description?: string;
-  icon?: LucideIcon;
+  icon?: React.ComponentType<LucideProps>;
   isLoading?: boolean;
   trend?: string;
   trendDirection?: 'up' | 'down' | 'neutral';
