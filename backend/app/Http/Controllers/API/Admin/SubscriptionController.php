@@ -7,6 +7,7 @@ use App\Models\UserSubscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use App\Services\XrayService;
 
 class SubscriptionController extends Controller
 {
@@ -56,10 +57,13 @@ class SubscriptionController extends Controller
             'total_traffic_gb' => $plan->traffic_limit_gb,
         ]);
 
-        // TODO: Add user to target user group if specified in plan
+        // Add user to target user group if specified in plan
         if ($plan->target_user_group_id) {
             $subscription->user->userGroups()->syncWithoutDetaching([$plan->target_user_group_id]);
         }
+
+        // Add user to all relevant nodes
+        $this->addUserToNodes($subscription);
 
         return response()->json([
             'message' => 'Subscription approved successfully.',
@@ -147,5 +151,34 @@ class SubscriptionController extends Controller
     {
         $subscription->delete();
         return response()->json(null, 204);
+    }
+    
+    /**
+     * Add user to all nodes that match the subscription plan criteria.
+     */
+    private function addUserToNodes(UserSubscription $subscription)
+    {
+        $xrayService = app(XrayService::class);
+        $criteria = $subscription->plan->node_selection_criteria;
+        
+        $query = Node::where('is_active', true);
+        
+        if (isset($criteria['tags']) && is_array($criteria['tags'])) {
+            $query->where(function ($q) use ($criteria) {
+                foreach ($criteria['tags'] as $tag) {
+                    $q->orWhereJsonContains('tags', $tag);
+                }
+            });
+        }
+        
+        if (isset($criteria['node_ids']) && is_array($criteria['node_ids'])) {
+            $query->whereIn('id', $criteria['node_ids']);
+        }
+        
+        $nodes = $query->get();
+        
+        foreach ($nodes as $node) {
+            $xrayService->addUserToNode($node, $subscription->user, $subscription);
+        }
     }
 }

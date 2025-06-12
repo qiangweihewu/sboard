@@ -50,6 +50,9 @@
                 :status="getTrafficStatus(subscription)"
                 style="margin-top: 8px;"
               />
+              <n-text depth="3" style="margin-top: 8px; display: block;">
+                {{ subscription.used_traffic_gb || 0 }} GB / {{ subscription.total_traffic_gb || 0 }} GB used
+              </n-text>
             </div>
 
             <!-- Subscription Link -->
@@ -57,7 +60,7 @@
               <n-text depth="3">Subscription Link</n-text>
               <n-input-group style="margin-top: 8px;">
                 <n-input
-                  :value="getSubscriptionUrl(subscription.subscription_token)"
+                  :value="getSubscriptionUrl(subscription.subscription_token)" 
                   readonly
                   placeholder="Subscription URL"
                 />
@@ -68,6 +71,9 @@
                   Copy
                 </n-button>
               </n-input-group>
+              <n-text depth="3" style="margin-top: 8px; display: block; font-size: 12px;">
+                Import this URL into your proxy client (V2RayN, Clash, etc.)
+              </n-text>
             </div>
 
             <template #action>
