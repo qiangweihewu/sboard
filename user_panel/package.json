@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vicons/material": "^0.13.0",
     "@vueuse/core": "^11.2.0",
     "axios": "^1.9.0",
     "naive-ui": "^2.40.1",
