@@ -2,6 +2,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/Auth/LoginPage';
 import DashboardPage from './pages/Dashboard/DashboardPage';
+import TestPage from './pages/TestPage';
 import UserListPage from './pages/Users/UserListPage';
 import UserGroupListPage from './pages/UserGroups/UserGroupListPage';
 import PlanListPage from './pages/Plans/PlanListPage';
@@ -28,6 +29,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
             <Route path="/" element={<DashboardPage />} />
+            <Route path="/test" element={<TestPage />} />
             <Route path="/users" element={<UserListPage />} />
             <Route path="/user-groups" element={<UserGroupListPage />} />
             <Route path="/plans" element={<PlanListPage />} />
