@@ -16,9 +16,16 @@ import { useAuth } from './contexts/AuthContext';
 function App() {
   const { isAuthenticated, isLoading } = useAuth();
 
+  // 添加调试日志
+  console.log('🔍 App component rendering...');
+  console.log('Auth state:', { isAuthenticated, isLoading });
+
   if (isLoading) {
+     console.log('⏳ Application is loading...');
      return <div>Application Loading...</div>;
   }
+
+  console.log('🎯 App component ready, rendering routes');
 
   return (
     <BrowserRouter>

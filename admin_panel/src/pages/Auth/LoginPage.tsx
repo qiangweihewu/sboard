@@ -21,21 +21,29 @@ const LoginPage: React.FC = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
+  console.log('🔐 LoginPage rendering...');
+  console.log('Auth state:', { isAuthenticated });
+  console.log('Redirect target:', from);
+
   useEffect(() => {
     if (isAuthenticated) {
+      console.log('✅ User already authenticated, redirecting to:', from);
       navigate(from, { replace: true });
     }
   }, [isAuthenticated, navigate, from]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    console.log('📝 Login form submitted');
     setError(null);
     setIsLoading(true);
     
     try {
+      console.log('🔑 Attempting login...');
       await login(email, password);
+      console.log('✅ Login successful!');
     } catch (err: any) {
-      console.error("Login page error:", err);
+      console.error("❌ Login page error:", err);
       setError(err.response?.data?.error || err.message || 'Failed to login. Please check your credentials.');
     } finally {
       setIsLoading(false);
