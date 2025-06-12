@@ -55,6 +55,62 @@ export default {
           DEFAULT: "hsl(var(--color-card))",
           foreground: "hsl(var(--color-card-foreground))",
         },
+        // Custom colors for modern design
+        blue: {
+          50: "hsl(var(--color-blue-50))",
+          500: "hsl(var(--color-blue-500))",
+          600: "hsl(var(--color-blue-600))",
+        },
+        purple: {
+          500: "hsl(var(--color-purple-500))",
+          600: "hsl(var(--color-purple-600))",
+        },
+        indigo: {
+          500: "hsl(var(--color-indigo-500))",
+          600: "hsl(var(--color-indigo-600))",
+        },
+        slate: {
+          50: "hsl(var(--color-slate-50))",
+          100: "hsl(var(--color-slate-100))",
+          200: "hsl(var(--color-slate-200))",
+          500: "hsl(var(--color-slate-500))",
+          600: "hsl(var(--color-slate-600))",
+          700: "hsl(var(--color-slate-700))",
+          800: "hsl(var(--color-slate-800))",
+          900: "hsl(var(--color-slate-900))",
+        },
+        white: "hsl(var(--color-white))",
+        emerald: {
+          500: "hsl(var(--color-emerald-500))",
+          600: "hsl(var(--color-emerald-600))",
+        },
+        teal: {
+          500: "hsl(var(--color-teal-500))",
+          600: "hsl(var(--color-teal-600))",
+        },
+        orange: {
+          500: "hsl(var(--color-orange-500))",
+          600: "hsl(var(--color-orange-600))",
+        },
+        pink: {
+          500: "hsl(var(--color-pink-500))",
+          600: "hsl(var(--color-pink-600))",
+        },
+        green: {
+          50: "hsl(var(--color-green-50))",
+          500: "hsl(var(--color-green-500))",
+          600: "hsl(var(--color-green-600))",
+        },
+        red: {
+          50: "hsl(var(--color-red-50))",
+          500: "hsl(var(--color-red-500))",
+          600: "hsl(var(--color-red-600))",
+        },
+        yellow: {
+          50: "hsl(var(--color-yellow-50))",
+          500: "hsl(var(--color-yellow-500))",
+          600: "hsl(var(--color-yellow-600))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -88,6 +144,10 @@ export default {
           "0%, 100%": { boxShadow: "0 0 20px rgba(59, 130, 246, 0.4)" },
           "50%": { boxShadow: "0 0 40px rgba(147, 51, 234, 0.6)" },
         },
+        "float": {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -96,6 +156,7 @@ export default {
         "slide-in": "slide-in 0.3s ease-out",
         "bounce-in": "bounce-in 0.6s ease-out",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "float": "float 6s ease-in-out infinite",
       },
       backdropBlur: {
         xs: '2px',
