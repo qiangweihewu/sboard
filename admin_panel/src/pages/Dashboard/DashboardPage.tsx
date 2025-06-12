@@ -1,16 +1,12 @@
 // src/pages/Dashboard/DashboardPage.tsx
-import React, { useEffect, useState, useCallback } from 'react'; // Added useEffect, useState, useCallback
+import React, { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import SummaryCard from '@/components/dashboard/SummaryCard'; // Assuming SummaryCard is ready
-import { get as apiGet } from '@/services/api'; // For API calls
-import { Link } from 'react-router-dom'; // Import Link
-// import { Button } from '@/components/ui/button'; // Not strictly needed if Link is styled directly
+import SummaryCard from '@/components/dashboard/SummaryCard';
+import { get as apiGet } from '@/services/api';
+import { Link } from 'react-router-dom';
 
-// Define a generic type for paginated API responses that include a 'total'
 interface PaginatedResponseWithTotal {
   total: number;
-  // Other pagination fields like data, current_page etc., are not strictly needed here
-  // but might be present in the actual response.
 }
 
 const DashboardPage: React.FC = () => {
@@ -28,14 +24,13 @@ const DashboardPage: React.FC = () => {
     setIsLoadingStats(true);
     setErrorStats(null);
     try {
-      // Fetch all stats concurrently
       const [
         usersResponse,
         groupsResponse,
         plansResponse,
         nodesResponse
       ] = await Promise.all([
-        apiGet<PaginatedResponseWithTotal>('/admin/users?per_page=1'), // Fetch only 1 item to get total efficiently
+        apiGet<PaginatedResponseWithTotal>('/admin/users?per_page=1'),
         apiGet<PaginatedResponseWithTotal>('/admin/user-groups?per_page=1'),
         apiGet<PaginatedResponseWithTotal>('/admin/plans?per_page=1'),
         apiGet<PaginatedResponseWithTotal>('/admin/nodes?per_page=1'),
@@ -49,7 +44,6 @@ const DashboardPage: React.FC = () => {
     } catch (err: any) {
       console.error("Failed to fetch dashboard stats:", err);
       setErrorStats(err.message || 'Failed to load summary data.');
-      // Set counts to error state or keep as '--'
       setUserCount('Error');
       setGroupCount('Error');
       setPlanCount('Error');
@@ -91,12 +85,11 @@ const DashboardPage: React.FC = () => {
         </div>
       </section>
 
-      {/* ... (Quick Actions section remains the same) ... */}
       <section aria-labelledby="quick-actions-heading">
         <h2 id="quick-actions-heading" className="text-2xl font-semibold mb-4">
           Quick Actions
         </h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"> {/* Adjusted to lg:grid-cols-4 for 4 items */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Link to="/users" className="block p-6 border rounded-lg shadow-sm hover:shadow-md transition-shadow bg-card text-card-foreground hover:bg-accent">
             <h3 className="text-lg font-medium mb-1">Manage Users</h3>
             <p className="text-sm text-muted-foreground">View, add, edit, or delete users.</p>

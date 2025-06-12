@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import UserGroupTable, { UserGroupData } from '@/components/user_groups/UserGroupTable';
 import UserGroupForm from '@/components/user_groups/UserGroupForm';
 import { UserGroupFormValues } from '@/lib/validators/userGroupValidator';
-import { get as apiGet, post as apiPost, put as apiPut, del as apiDel } from '@/services/api'; // Add apiDel
+import { get as apiGet, post as apiPost, put as apiPut, del as apiDel } from '@/services/api';
 import {
   Dialog,
   DialogContent,
@@ -22,8 +22,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  // AlertDialogTrigger, // Not used directly here
-} from "@/components/ui/alert-dialog"; // Import AlertDialog components
+} from "@/components/ui/alert-dialog";
 
 interface PaginatedUserGroupsResponse {
   data: UserGroupData[];
@@ -42,11 +41,11 @@ const UserGroupListPage: React.FC = () => {
   const [isEditGroupDialogOpen, setIsEditGroupDialogOpen] = useState(false);
   const [editingGroup, setEditingGroup] = useState<UserGroupData | null>(null);
 
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false); // For delete confirmation
-  const [groupToDelete, setGroupToDelete] = useState<UserGroupData | null>(null); // Group to be deleted
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [groupToDelete, setGroupToDelete] = useState<UserGroupData | null>(null);
 
   const [formSubmitting, setFormSubmitting] = useState(false);
-  const [deleteSubmitting, setDeleteSubmitting] = useState(false); // For delete operation
+  const [deleteSubmitting, setDeleteSubmitting] = useState(false);
 
   const fetchUserGroups = useCallback(async () => {
     setIsLoading(true);
@@ -105,7 +104,6 @@ const UserGroupListPage: React.FC = () => {
     setIsEditGroupDialogOpen(true);
   };
 
-  // Updated handleDeleteGroup to openDeleteConfirmationDialog
   const openDeleteConfirmationDialog = (group: UserGroupData) => {
     setGroupToDelete(group);
     setIsDeleteDialogOpen(true);
@@ -118,13 +116,12 @@ const UserGroupListPage: React.FC = () => {
       await apiDel(`/admin/user-groups/${groupToDelete.id}`);
       setIsDeleteDialogOpen(false);
       setGroupToDelete(null);
-      fetchUserGroups(); // Refresh user group list
+      fetchUserGroups();
       console.log("User group deleted successfully");
-      // Add toast notification here if desired
     } catch (err: any) {
       console.error("Failed to delete user group:", err);
       const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || "Failed to delete user group.";
-      alert("Error deleting user group: " + errorMessage); // Simple alert for now
+      alert("Error deleting user group: " + errorMessage);
     } finally {
       setDeleteSubmitting(false);
     }
@@ -134,7 +131,6 @@ const UserGroupListPage: React.FC = () => {
     <div className="container mx-auto py-10">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">User Group Management</h1>
-        {/* Add User Group Dialog Trigger - existing */}
         <Dialog open={isAddGroupDialogOpen} onOpenChange={setIsAddGroupDialogOpen}>
             <DialogTrigger asChild>
                <Button>Add New User Group</Button>
@@ -160,11 +156,10 @@ const UserGroupListPage: React.FC = () => {
         <UserGroupTable
           userGroups={userGroups}
           onEdit={openEditGroupDialog}
-          onDelete={openDeleteConfirmationDialog} // Connect UserGroupTable's onDelete
+          onDelete={openDeleteConfirmationDialog}
         />
       )}
 
-      {/* Edit User Group Dialog - existing */}
       {editingGroup && (
          <Dialog open={isEditGroupDialogOpen} onOpenChange={(isOpen) => {
              setIsEditGroupDialogOpen(isOpen);
@@ -188,7 +183,6 @@ const UserGroupListPage: React.FC = () => {
          </Dialog>
       )}
 
-      {/* Delete User Group Confirmation Dialog */}
       {groupToDelete && (
         <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
           <AlertDialogContent>

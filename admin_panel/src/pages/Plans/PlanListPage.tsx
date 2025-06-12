@@ -1,10 +1,10 @@
 // src/pages/Plans/PlanListPage.tsx
 import React, { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import PlanTable, { PlanData } from '@/components/plans/PlanTable'; // Import PlanTable and PlanData
-import PlanForm, { UserGroupOption } from '@/components/plans/PlanForm'; // Import UserGroupOption
+import PlanTable, { PlanData } from '@/components/plans/PlanTable';
+import PlanForm, { UserGroupOption } from '@/components/plans/PlanForm';
 import { PlanFormValues } from '@/lib/validators/planValidator';
-import { get as apiGet, post as apiPost, put as apiPut, del as apiDel } from '@/services/api'; // Ensure apiPut is here
+import { get as apiGet, post as apiPost, put as apiPut, del as apiDel } from '@/services/api';
 import {
   Dialog,
   DialogContent,
@@ -22,57 +22,43 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  // AlertDialogTrigger, // Not used directly here
-} from "@/components/ui/alert-dialog"; // Import AlertDialog components
+} from "@/components/ui/alert-dialog";
 
 interface PaginatedPlansResponse {
   data: PlanData[];
-  // ... other pagination fields
   current_page: number;
   last_page: number;
   total: number;
   per_page: number;
 }
 
-// Type for raw user group data from API, assuming it has at least id and name
 interface ApiUserGroup {
   id: number;
   name: string;
-  // other fields if present
 }
 
-// Define a type for the paginated API response for UserGroups, if applicable
-// Assuming /admin/user-groups (apiResource) returns paginated data by default.
 interface PaginatedApiUserGroupsResponse {
   data: ApiUserGroup[];
-  // other pagination fields if needed
 }
-
 
 const PlanListPage: React.FC = () => {
   const [plans, setPlans] = useState<PlanData[]>([]);
-  const [isLoading, setIsLoading] = useState(false); // For plans list
-  const [error, setError] = useState<string | null>(null); // For plans list
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const [availableUserGroups, setAvailableUserGroups] = useState<UserGroupOption[]>([]); // New state for user groups
-  const [groupsLoading, setGroupsLoading] = useState(false); // New state for groups loading
-  const [groupsError, setGroupsError] = useState<string | null>(null); // New state for groups error
+  const [availableUserGroups, setAvailableUserGroups] = useState<UserGroupOption[]>([]);
+  const [groupsLoading, setGroupsLoading] = useState(false);
+  const [groupsError, setGroupsError] = useState<string | null>(null);
 
-  // Placeholders for dialog states and form submission states (will be used in later steps)
   const [isAddPlanDialogOpen, setIsAddPlanDialogOpen] = useState(false);
-  // const [isEditPlanDialogOpen, setIsEditPlanDialogOpen] = useState(false);
-  // const [editingPlan, setEditingPlan] = useState<PlanData | null>(null);
   const [formSubmitting, setFormSubmitting] = useState(false);
 
-  // Add new states for edit dialog
   const [isEditPlanDialogOpen, setIsEditPlanDialogOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<PlanData | null>(null);
 
-  // Add new states for delete dialog
   const [isDeletePlanDialogOpen, setIsDeletePlanDialogOpen] = useState(false);
   const [planToDelete, setPlanToDelete] = useState<PlanData | null>(null);
   const [deletePlanSubmitting, setDeletePlanSubmitting] = useState(false);
-
 
   const fetchPlans = useCallback(async () => {
     setIsLoading(true);
@@ -88,15 +74,12 @@ const PlanListPage: React.FC = () => {
     }
   }, []);
 
-  // New function to fetch user groups
   const fetchUserGroupsForSelect = useCallback(async () => {
     setGroupsLoading(true);
     setGroupsError(null);
     try {
-      // Using PaginatedApiUserGroupsResponse as /admin/user-groups is an apiResource
       const response = await apiGet<PaginatedApiUserGroupsResponse>('/admin/user-groups');
       setAvailableUserGroups(response.data.data.map(group => ({ id: group.id, name: group.name })));
-
     } catch (err: any) {
       console.error("Failed to fetch user groups for form:", err);
       setGroupsError(err.message || 'Failed to fetch user groups.');
@@ -107,16 +90,12 @@ const PlanListPage: React.FC = () => {
 
   useEffect(() => {
     fetchPlans();
-    fetchUserGroupsForSelect(); // Fetch user groups on component mount
+    fetchUserGroupsForSelect();
   }, [fetchPlans, fetchUserGroupsForSelect]);
-
 
   const handleAddPlanSubmit = async (values: PlanFormValues) => {
     setFormSubmitting(true);
     try {
-      // Prepare payload: Zod schema uses coerce for numbers,
-      // but ensure they are numbers if API is strict.
-      // node_selection_criteria is already validated as JSON string by Zod.
       const payload = {
         ...values,
         duration_days: Number(values.duration_days),
@@ -127,19 +106,14 @@ const PlanListPage: React.FC = () => {
       };
 
       await apiPost('/admin/plans', payload);
-      setIsAddPlanDialogOpen(false); // Close dialog on success
-      fetchPlans(); // Refresh plan list
+      setIsAddPlanDialogOpen(false);
+      fetchPlans();
       console.log("Plan created successfully");
-      // Replace with toast: toast({ title: "Plan Created", description: "New plan added successfully." });
-      alert("Plan created successfully!"); // Temporary feedback
+      alert("Plan created successfully!");
     } catch (err: any) {
       console.error("Failed to create plan:", err);
       const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || "Failed to create plan.";
-      // Replace with toast: toast({ variant: "destructive", title: "Error", description: errorMessage });
-      alert("Error creating plan: " + errorMessage); // Simple alert for now
-      // Optionally, if API returns field-specific errors (e.g., err.response.data.errors),
-      // you could pass them back to the form using form.setError() from react-hook-form,
-      // but that requires passing the form instance or setError function down.
+      alert("Error creating plan: " + errorMessage);
     } finally {
       setFormSubmitting(false);
     }
@@ -149,7 +123,6 @@ const PlanListPage: React.FC = () => {
     if (!editingPlan) return;
     setFormSubmitting(true);
     try {
-        // Prepare payload, similar to add, ensuring numeric types
         const payload = {
             ...values,
             duration_days: Number(values.duration_days),
@@ -157,15 +130,14 @@ const PlanListPage: React.FC = () => {
             device_limit: Number(values.device_limit),
             price: values.price !== null && values.price !== undefined ? Number(values.price) : null,
             target_user_group_id: values.target_user_group_id ? Number(values.target_user_group_id) : null,
-            // node_selection_criteria is already a string from the form, validated as JSON
         };
 
         await apiPut(`/admin/plans/${editingPlan.id}`, payload);
         setIsEditPlanDialogOpen(false);
         setEditingPlan(null);
-        fetchPlans(); // Refresh plan list
+        fetchPlans();
         console.log("Plan updated successfully");
-        alert("Plan updated successfully!"); // Temporary feedback
+        alert("Plan updated successfully!");
     } catch (err: any) {
         console.error("Failed to update plan:", err);
         const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || "Failed to update plan.";
@@ -180,14 +152,6 @@ const PlanListPage: React.FC = () => {
     setIsEditPlanDialogOpen(true);
   };
 
-  // Placeholders for Edit/Delete Plan (will be implemented in later steps)
-  // const handleEditPlan = (plan: PlanData) => { // This is replaced by openEditPlanDialog effectively
-  //   console.log('Edit plan action triggered:', plan);
-  // };
-  // const handleDeletePlan = (plan: PlanData) => { // This is replaced by openDeletePlanConfirmationDialog
-  //  console.log('Delete plan action triggered:', plan);
-  // };
-
   const openDeletePlanConfirmationDialog = (plan: PlanData) => {
     setPlanToDelete(plan);
     setIsDeletePlanDialogOpen(true);
@@ -200,9 +164,9 @@ const PlanListPage: React.FC = () => {
         await apiDel(`/admin/plans/${planToDelete.id}`);
         setIsDeletePlanDialogOpen(false);
         setPlanToDelete(null);
-        fetchPlans(); // Refresh plan list
+        fetchPlans();
         console.log("Plan deleted successfully");
-        alert("Plan deleted successfully!"); // Temporary feedback
+        alert("Plan deleted successfully!");
     } catch (err: any) {
         console.error("Failed to delete plan:", err);
         const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || "Failed to delete plan.";
@@ -220,7 +184,7 @@ const PlanListPage: React.FC = () => {
           <DialogTrigger asChild>
             <Button disabled={groupsLoading}>Add New Plan</Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-lg"> {/* Adjusted width for potentially longer form */}
+          <DialogContent className="sm:max-w-lg">
             <DialogHeader>
               <DialogTitle>Add New Plan</DialogTitle>
               <DialogDescription>
@@ -229,10 +193,10 @@ const PlanListPage: React.FC = () => {
               </DialogDescription>
             </DialogHeader>
             <PlanForm
-              onSubmit={handleAddPlanSubmit} // Placeholder
+              onSubmit={handleAddPlanSubmit}
               isEditMode={false}
               isLoading={formSubmitting || groupsLoading}
-              availableUserGroups={availableUserGroups} // Pass fetched user groups
+              availableUserGroups={availableUserGroups}
             />
           </DialogContent>
         </Dialog>
@@ -246,17 +210,15 @@ const PlanListPage: React.FC = () => {
         <PlanTable
           plans={plans}
           onEdit={openEditPlanDialog}
-          onDelete={openDeletePlanConfirmationDialog} // Connect onDelete
+          onDelete={openDeletePlanConfirmationDialog}
         />
       )}
 
-      {/* Edit Plan Dialog - existing */}
       {editingPlan && (
          <Dialog open={isEditPlanDialogOpen} onOpenChange={(isOpen) => {
              setIsEditPlanDialogOpen(isOpen);
              if (!isOpen) setEditingPlan(null);
          }}>
-            {/* ... (DialogContent for Edit Plan - keep existing) ... */}
              <DialogContent className="sm:max-w-lg">
                <DialogHeader>
                  <DialogTitle>Edit Plan: {editingPlan.name}</DialogTitle>
@@ -287,7 +249,6 @@ const PlanListPage: React.FC = () => {
          </Dialog>
       )}
 
-      {/* Delete Plan Confirmation Dialog */}
       {planToDelete && (
         <AlertDialog open={isDeletePlanDialogOpen} onOpenChange={setIsDeletePlanDialogOpen}>
         <AlertDialogContent>
@@ -305,7 +266,7 @@ const PlanListPage: React.FC = () => {
             <AlertDialogAction
                 onClick={confirmDeletePlan}
                 disabled={deletePlanSubmitting}
-                className="bg-destructive hover:bg-destructive/90 text-destructive-foreground" // Standard destructive styling
+                className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
             >
                 {deletePlanSubmitting ? 'Deleting...' : 'Delete Plan'}
             </AlertDialogAction>
