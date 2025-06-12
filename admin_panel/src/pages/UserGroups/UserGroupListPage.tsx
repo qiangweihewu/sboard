@@ -1,9 +1,9 @@
 // src/pages/UserGroups/UserGroupListPage.tsx
 import React, { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import UserGroupTable, { UserGroupData } from '@/components/user_groups/UserGroupTable';
+import UserGroupTable, { type UserGroupData } from '@/components/user_groups/UserGroupTable';
 import UserGroupForm from '@/components/user_groups/UserGroupForm';
-import { UserGroupFormValues } from '@/lib/validators/userGroupValidator';
+import type { UserGroupFormValues } from '@/lib/validators/userGroupValidator';
 import { get as apiGet, post as apiPost, put as apiPut, del as apiDel } from '@/services/api';
 import {
   Dialog,

@@ -21,4 +21,4 @@ export const planFormSchema = z.object({
   is_active: z.boolean().default(true).optional(),
 });
 
-export type PlanFormValues = z.infer<typeof planFormSchema>;
+export interface PlanFormValues extends z.infer<typeof planFormSchema> {}

@@ -6,4 +6,4 @@ export const userGroupFormSchema = z.object({
   description: z.string().max(1000, { message: "Description must not exceed 1000 characters." }).optional().or(z.literal('')),
 });
 
-export type UserGroupFormValues = z.infer<typeof userGroupFormSchema>;
+export interface UserGroupFormValues extends z.infer<typeof userGroupFormSchema> {}

@@ -1,9 +1,9 @@
 // src/pages/Nodes/NodeListPage.tsx
 import React, { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import NodeTable, { NodeData } from '@/components/nodes/NodeTable';
+import NodeTable, { type NodeData } from '@/components/nodes/NodeTable';
 import NodeForm from '@/components/nodes/NodeForm';
-import { AddNodeFormValues, EditNodeFormValues } from '@/lib/validators/nodeValidator';
+import type { AddNodeFormValues, EditNodeFormValues } from '@/lib/validators/nodeValidator';
 import { get as apiGet, post as apiPost, put as apiPut, del as apiDel } from '@/services/api';
 import {
   Dialog,

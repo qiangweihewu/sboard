@@ -1,9 +1,9 @@
 // src/pages/Plans/PlanListPage.tsx
 import React, { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import PlanTable, { PlanData } from '@/components/plans/PlanTable';
-import PlanForm, { UserGroupOption } from '@/components/plans/PlanForm';
-import { PlanFormValues } from '@/lib/validators/planValidator';
+import PlanTable, { type PlanData } from '@/components/plans/PlanTable';
+import PlanForm, { type UserGroupOption } from '@/components/plans/PlanForm';
+import type { PlanFormValues } from '@/lib/validators/planValidator';
 import { get as apiGet, post as apiPost, put as apiPut, del as apiDel } from '@/services/api';
 import {
   Dialog,
