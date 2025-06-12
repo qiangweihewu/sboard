@@ -20,4 +20,4 @@ export const userFormSchema = z.object({
    path: ["password_confirmation"],
 });
 
-export type UserFormValues = z.infer<typeof userFormSchema>;
+export interface UserFormValues extends z.infer<typeof userFormSchema> {}
