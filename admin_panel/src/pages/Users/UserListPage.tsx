@@ -2,7 +2,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import UserTable, { UserData } from '@/components/users/UserTable';
-import UserForm, { RoleOption } from '@/components/users/UserForm';
+import UserForm from '@/components/users/UserForm';
+import type { RoleOption } from '@/components/users/UserForm';
 import { UserFormValues } from '@/lib/validators/userValidator';
 import { get as apiGet, post as apiPost, put as apiPut, del as apiDel } from '@/services/api';
 import {
