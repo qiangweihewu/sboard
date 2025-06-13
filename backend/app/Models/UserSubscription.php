@@ -20,6 +20,7 @@ class UserSubscription extends Model
         'current_device_count',
         'subscription_token',
         'status',
+        'speed_limit_mbps',
     ];
 
     protected $casts = [
@@ -28,6 +29,7 @@ class UserSubscription extends Model
         'total_traffic_gb' => 'decimal:2',
         'used_traffic_gb' => 'decimal:2',
         'current_device_count' => 'integer',
+        'speed_limit_mbps' => 'integer',
     ];
 
     protected static function boot()

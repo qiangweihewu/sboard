@@ -30,6 +30,7 @@ class PlanController extends Controller
             'duration_days' => 'required|integer|min:1',
             'traffic_limit_gb' => 'required|numeric|min:0',
             'device_limit' => 'required|integer|min:0',
+            'speed_limit_mbps' => 'nullable|integer|min:0', // Add speed_limit_mbps validation
             'price' => 'nullable|numeric|min:0',
             'node_selection_criteria' => 'required|json', // Or 'array' if you prefer to pass as array
             'target_user_group_id' => ['nullable', Rule::exists('user_groups', 'id')],
@@ -73,6 +74,7 @@ class PlanController extends Controller
             'duration_days' => 'sometimes|required|integer|min:1',
             'traffic_limit_gb' => 'sometimes|required|numeric|min:0',
             'device_limit' => 'sometimes|required|integer|min:0',
+            'speed_limit_mbps' => 'sometimes|nullable|integer|min:0', // Add speed_limit_mbps validation
             'price' => 'sometimes|nullable|numeric|min:0',
             'node_selection_criteria' => 'sometimes|required|json', // Or 'array'
             'target_user_group_id' => ['sometimes', 'nullable', Rule::exists('user_groups', 'id')],

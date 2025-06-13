@@ -21,6 +21,7 @@ export interface PlanData {
   duration_days: number;
   traffic_limit_gb: number; // Assuming backend sends as number
   device_limit: number;
+  speed_limit_mbps?: number | null; // Add speed_limit_mbps
   price?: number | string | null; // Price can be number or string (e.g., "10.00")
   is_active: boolean;
   node_selection_criteria: any; // JSON, can be more specific later
@@ -53,6 +54,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ plans, onEdit, onDelete }) => {
           <TableHead>Duration (Days)</TableHead>
           <TableHead>Traffic (GB)</TableHead>
           <TableHead>Devices</TableHead>
+          <TableHead>Speed Limit (Mbps)</TableHead> {/* Add Speed Limit column header */}
           <TableHead>Price</TableHead>
           <TableHead>Status</TableHead>
           <TableHead className="text-right">Actions</TableHead>
@@ -66,6 +68,7 @@ const PlanTable: React.FC<PlanTableProps> = ({ plans, onEdit, onDelete }) => {
             <TableCell>{plan.duration_days}</TableCell>
             <TableCell>{plan.traffic_limit_gb}</TableCell>
             <TableCell>{plan.device_limit}</TableCell>
+            <TableCell>{plan.speed_limit_mbps ? `${plan.speed_limit_mbps} Mbps` : 'N/A'}</TableCell> {/* Display speed limit */}
             <TableCell>{plan.price ? `$${Number(plan.price).toFixed(2)}` : 'N/A'}</TableCell>
             <TableCell>
               {plan.is_active ? (

@@ -23,6 +23,13 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'role_id',
         'is_active',
+        'remark',
+        'used_traffic',
+        'total_traffic',
+        'expire_at',
+        'plan_id',
+        'speed_limit',
+        'device_limit',
     ];
 
     /**
@@ -45,6 +52,13 @@ class User extends Authenticatable implements JWTSubject
         return [
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'remark' => 'string',
+            'used_traffic' => 'integer',
+            'total_traffic' => 'integer',
+            'expire_at' => 'datetime',
+            'plan_id' => 'integer',
+            'speed_limit' => 'integer',
+            'device_limit' => 'integer',
         ];
     }
 

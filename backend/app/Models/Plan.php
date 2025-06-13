@@ -15,6 +15,7 @@ class Plan extends Model
         'duration_days',
         'traffic_limit_gb',
         'device_limit',
+        'speed_limit_mbps',
         'price',
         'node_selection_criteria', // Stored as JSON
         'target_user_group_id',
@@ -24,6 +25,7 @@ class Plan extends Model
     protected $casts = [
         'node_selection_criteria' => 'array', // Automatically cast JSON to array and vice-versa
         'is_active' => 'boolean',
+        'speed_limit_mbps' => 'integer',
         'price' => 'decimal:2', // Example cast, adjust precision as needed
         'traffic_limit_gb' => 'decimal:2', // Example cast
     ];

@@ -7,6 +7,7 @@ export const planFormSchema = z.object({
   duration_days: z.coerce.number().int().positive({ message: "Duration must be a positive number of days." }),
   traffic_limit_gb: z.coerce.number().positive({ message: "Traffic limit must be a positive number." }),
   device_limit: z.coerce.number().int().nonnegative({ message: "Device limit must be zero or a positive number." }),
+  speed_limit_mbps: z.coerce.number().int().nonnegative({ message: "Speed limit must be zero or a positive number." }).optional().nullable(), // Add speed_limit_mbps
   price: z.coerce.number().nonnegative({ message: "Price must be zero or a positive number." }).optional().nullable(),
   node_selection_criteria: z.string().min(1, {message: "Node selection criteria (JSON) is required."})
     .refine((data) => {

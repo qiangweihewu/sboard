@@ -16,6 +16,13 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             // role_id and is_active will be added in a separate migration
+            $table->text('remark')->nullable();
+            $table->bigInteger('used_traffic')->default(0); // Used traffic in bytes
+            $table->bigInteger('total_traffic')->default(0); // Total traffic in bytes
+            $table->timestamp('expire_at')->nullable();
+            $table->foreignId('plan_id')->nullable()->constrained('plans')->onDelete('set null');
+            $table->integer('speed_limit')->default(0); // Speed limit in Mbps
+            $table->integer('device_limit')->default(0); // Device limit
             $table->rememberToken();
             $table->timestamps();
         });

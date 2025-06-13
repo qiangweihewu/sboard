@@ -55,6 +55,7 @@ class SubscriptionController extends Controller
             'start_date' => $startDate,
             'end_date' => $endDate,
             'total_traffic_gb' => $plan->traffic_limit_gb,
+            'speed_limit_mbps' => $plan->speed_limit_mbps, // Set speed limit from plan
         ]);
 
         // Add user to target user group if specified in plan
@@ -110,6 +111,7 @@ class SubscriptionController extends Controller
             'user_id' => $request->user_id,
             'plan_id' => $plan->id,
             'total_traffic_gb' => $plan->traffic_limit_gb,
+            'speed_limit_mbps' => $plan->speed_limit_mbps, // Set speed limit from plan
             'status' => $autoApprove ? 'ACTIVE' : 'PENDING_APPROVAL',
             'start_date' => $autoApprove ? now() : null,
             'end_date' => $autoApprove ? now()->addDays($plan->duration_days) : null,
@@ -133,6 +135,7 @@ class SubscriptionController extends Controller
             'end_date' => 'sometimes|nullable|date|after:start_date',
             'used_traffic_gb' => 'sometimes|numeric|min:0',
             'current_device_count' => 'sometimes|integer|min:0',
+            'speed_limit_mbps' => 'sometimes|nullable|integer|min:0', // Add speed_limit_mbps validation
         ]);
 
         if ($validator->fails()) {

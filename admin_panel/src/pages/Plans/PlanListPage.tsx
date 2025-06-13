@@ -101,6 +101,7 @@ const PlanListPage: React.FC = () => {
         duration_days: Number(values.duration_days),
         traffic_limit_gb: Number(values.traffic_limit_gb),
         device_limit: Number(values.device_limit),
+        speed_limit_mbps: values.speed_limit_mbps !== null && values.speed_limit_mbps !== undefined ? Number(values.speed_limit_mbps) : null, // Include speed_limit_mbps
         price: values.price !== null && values.price !== undefined ? Number(values.price) : null,
         target_user_group_id: values.target_user_group_id ? Number(values.target_user_group_id) : null,
       };
@@ -128,6 +129,7 @@ const PlanListPage: React.FC = () => {
             duration_days: Number(values.duration_days),
             traffic_limit_gb: Number(values.traffic_limit_gb),
             device_limit: Number(values.device_limit),
+            speed_limit_mbps: values.speed_limit_mbps !== null && values.speed_limit_mbps !== undefined ? Number(values.speed_limit_mbps) : null, // Include speed_limit_mbps
             price: values.price !== null && values.price !== undefined ? Number(values.price) : null,
             target_user_group_id: values.target_user_group_id ? Number(values.target_user_group_id) : null,
         };
@@ -235,6 +237,7 @@ const PlanListPage: React.FC = () => {
                      duration_days: editingPlan.duration_days,
                      traffic_limit_gb: editingPlan.traffic_limit_gb,
                      device_limit: editingPlan.device_limit,
+                     speed_limit_mbps: editingPlan.speed_limit_mbps !== null && editingPlan.speed_limit_mbps !== undefined ? Number(editingPlan.speed_limit_mbps) : undefined, // Include speed_limit_mbps
                      price: editingPlan.price !== null && editingPlan.price !== undefined ? Number(editingPlan.price) : undefined,
                      node_selection_criteria: typeof editingPlan.node_selection_criteria === 'object'
                          ? JSON.stringify(editingPlan.node_selection_criteria, null, 2)

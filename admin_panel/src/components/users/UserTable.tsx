@@ -23,6 +23,26 @@ export interface UserData {
     name: string;
   };
   created_at: string; // Or Date
+  remark?: string;
+  used_traffic?: number | null;
+  total_traffic?: number | null;
+  expire_at?: string | null;
+  plan_id?: number | null;
+  speed_limit?: number | null;
+  device_limit?: number | null;
+  active_subscriptions?: Array<{
+    id: number;
+    start_date: string;
+    end_date: string;
+    total_traffic: number; // Changed from total_traffic_gb
+    used_traffic: number; // Changed from used_traffic_gb
+    speed_limit: number | null; // Changed from speed_limit_mbps
+    device_limit: number | null; // Changed from current_device_count
+    plan: {
+      id: number;
+      name: string;
+    };
+  }>;
   // Add other fields as necessary
 }
 
@@ -42,12 +62,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, onEdit, onDelete }) => {
       <TableCaption>A list of registered users.</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[100px]">ID</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Role</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Joined</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
+          <TableHead className="w-[100px]">ID</TableHead><TableHead>Email</TableHead><TableHead>Role</TableHead><TableHead>Status</TableHead><TableHead>Remark</TableHead><TableHead>Subscription Plan</TableHead><TableHead>Traffic Used</TableHead><TableHead>Traffic Total</TableHead><TableHead>Expires At</TableHead><TableHead>Speed Limit</TableHead><TableHead>Device Limit</TableHead><TableHead>Joined</TableHead><TableHead className="text-right">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -66,9 +81,16 @@ const UserTable: React.FC<UserTableProps> = ({ users, onEdit, onDelete }) => {
                   The default 'default' variant is primary colored. 'secondary' or custom might be better for status.
                   If 'Badge' component is not added yet, this will cause an error.
               */}
-            </TableCell>
-            <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
-            <TableCell className="text-right space-x-2">
+        </TableCell>
+        <TableCell>{user.remark || 'N/A'}</TableCell>
+        <TableCell>{user.active_subscriptions && user.active_subscriptions.length > 0 ? user.active_subscriptions[0].plan.name : 'N/A'}</TableCell>
+        <TableCell>{user.active_subscriptions && user.active_subscriptions.length > 0 ? `${(user.active_subscriptions[0].used_traffic / (1024 * 1024 * 1024)).toFixed(2)} GB` : 'N/A'}</TableCell>
+        <TableCell>{user.active_subscriptions && user.active_subscriptions.length > 0 ? `${(user.active_subscriptions[0].total_traffic / (1024 * 1024 * 1024)).toFixed(2)} GB` : 'N/A'}</TableCell>
+        <TableCell>{user.active_subscriptions && user.active_subscriptions.length > 0 ? new Date(user.active_subscriptions[0].end_date).toLocaleDateString() : 'N/A'}</TableCell>
+        <TableCell>{user.active_subscriptions && user.active_subscriptions.length > 0 && user.active_subscriptions[0].speed_limit !== null ? `${user.active_subscriptions[0].speed_limit} Mbps` : 'N/A'}</TableCell>
+        <TableCell>{user.active_subscriptions && user.active_subscriptions.length > 0 ? `${user.active_subscriptions[0].device_limit}` : 'N/A'}</TableCell>
+        <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
+        <TableCell className="text-right space-x-2">
               <Button variant="outline" size="sm" onClick={() => onEdit(user)}>
                 Edit
               </Button>

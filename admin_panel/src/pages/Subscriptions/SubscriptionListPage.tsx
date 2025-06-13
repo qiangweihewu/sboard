@@ -39,6 +39,7 @@ interface SubscriptionData {
   total_traffic_gb: number;
   used_traffic_gb: number;
   current_device_count: number;
+  speed_limit_mbps?: number | null; // Add speed_limit_mbps
   subscription_token?: string;
   status: 'PENDING_APPROVAL' | 'ACTIVE' | 'EXPIRED' | 'CANCELLED';
   created_at: string;
@@ -196,6 +197,7 @@ const SubscriptionListPage: React.FC = () => {
               <TableHead>Start Date</TableHead>
               <TableHead>End Date</TableHead>
               <TableHead>Traffic Usage</TableHead>
+              <TableHead>Speed Limit</TableHead> {/* Add Speed Limit column header */}
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -211,6 +213,7 @@ const SubscriptionListPage: React.FC = () => {
                 <TableCell>
                   {subscription.used_traffic_gb} / {subscription.total_traffic_gb} GB
                 </TableCell>
+                <TableCell>{subscription.speed_limit_mbps ? `${subscription.speed_limit_mbps} Mbps` : 'N/A'}</TableCell> {/* Display speed limit */}
                 <TableCell>
                   <div className="flex space-x-2">
                     {subscription.status === 'PENDING_APPROVAL' && (

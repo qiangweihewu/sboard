@@ -21,6 +21,7 @@ return new class extends Migration
             $table->decimal('used_traffic_gb', 10, 2)->default(0);
             $table->integer('current_device_count')->default(0);
             $table->string('subscription_token', 64)->unique()->nullable();
+            $table->integer('speed_limit_mbps')->nullable(); // Add speed_limit_mbps field
             $table->enum('status', ['PENDING_APPROVAL', 'ACTIVE', 'EXPIRED', 'CANCELLED', 'PAYMENT_PENDING'])->default('PENDING_APPROVAL');
             $table->timestamps();
 

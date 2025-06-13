@@ -2,11 +2,11 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { userFormSchema, type UserFormValues } from '@/lib/validators/userValidator'; // Adjust path if needed
+import { userFormSchema, type UserFormValues } from '@/lib/validators/userValidator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
+//import { Label } from '@/components/ui/label';
 import {
   Form,
   FormControl,
@@ -30,29 +30,44 @@ export interface RoleOption {
   name:string;
 }
 
+// Define a type for available plans (ID and Name)
+export interface PlanOption {
+  id: number;
+  name: string;
+}
+
 interface UserFormProps {
   onSubmit: (values: UserFormValues) => Promise<void>;
   initialData?: Partial<UserFormValues>; // For pre-filling form in edit mode
   isEditMode?: boolean;
   isLoading?: boolean;
   availableRoles?: RoleOption[]; // To populate the Role select field
+  availablePlans?: PlanOption[]; // To populate the Plan select field
 }
-
+ 
 const UserForm: React.FC<UserFormProps> = ({
   onSubmit,
   initialData,
   isEditMode = false,
   isLoading = false,
-  availableRoles = []
+  availableRoles = [],
+  availablePlans = []
 }) => {
   const form = useForm<UserFormValues>({
-    resolver: zodResolver(userFormSchema), // Using the base schema
+    resolver: zodResolver(userFormSchema),
     defaultValues: initialData || {
       email: '',
       password: '',
       password_confirmation: '',
-      role_id: undefined, // Or a default role_id if applicable
+      role_id: undefined,
       is_active: true,
+      remark: '',
+      used_traffic: 0,
+      total_traffic: 0,
+      expire_at: '',
+      plan_id: undefined,
+      speed_limit: 0,
+      device_limit: 0,
     },
   });
 
@@ -153,38 +168,176 @@ const UserForm: React.FC<UserFormProps> = ({
                 Password fields are not shown here for editing user details.
             </FormDescription>
          )}
+ 
+        <FormField
+          control={form.control}
+          name="remark"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Remark</FormLabel>
+              <FormControl>
+                <Input placeholder="Any notes about the user" {...field} disabled={isLoading} />
+              </FormControl>
+              <FormDescription>
+                Internal notes about the user, visible only to administrators.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}
-          name="role_id"
+          name="used_traffic"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Role</FormLabel>
+              <FormLabel>Used Traffic (MB)</FormLabel>
+              <FormControl>
+                <Input type="number" placeholder="0" {...field} value={field.value ?? ''} disabled={isLoading} />
+              </FormControl>
+              <FormDescription>
+                Current traffic used by the user in megabytes.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="total_traffic"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Total Traffic (MB)</FormLabel>
+              <FormControl>
+                <Input type="number" placeholder="0" {...field} value={field.value ?? ''} disabled={isLoading} />
+              </FormControl>
+              <FormDescription>
+                Total traffic allocated to the user in megabytes.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="expire_at"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Expiration Date</FormLabel>
+              <FormControl>
+                <Input type="datetime-local" {...field} value={field.value ?? ''} disabled={isLoading} />
+              </FormControl>
+              <FormDescription>
+                The date and time when the user's subscription expires.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="plan_id"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Subscription Plan</FormLabel>
               <Select
                 onValueChange={(value) => field.onChange(value ? parseInt(value, 10) : null)}
-                // Ensure defaultValue is a string if field.value is number
                 defaultValue={field.value?.toString()}
-                value={field.value?.toString()} // Controlled component needs value prop too
+                value={field.value?.toString()}
                 disabled={isLoading}
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a role" />
+                    <SelectValue placeholder="Select a plan" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {availableRoles.map(role => (
-                    <SelectItem key={role.id} value={role.id.toString()}>
-                      {role.name}
-                    </SelectItem>
-                  ))}
-                  {availableRoles.length === 0 && <SelectItem value="" disabled>No roles available</SelectItem>}
+                  {availablePlans.length > 0 ? (
+                    availablePlans.map(plan => (
+                      <SelectItem key={plan.id} value={plan.id.toString()}>
+                        {plan.name}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="no-plans" disabled>No plans available</SelectItem>
+                  )}
                 </SelectContent>
               </Select>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="speed_limit"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Speed Limit (Mbps)</FormLabel>
+              <FormControl>
+                <Input type="number" placeholder="0" {...field} value={field.value ?? ''} disabled={isLoading} />
+              </FormControl>
+              <FormDescription>
+                Maximum download/upload speed for the user in Mbps.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="device_limit"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Device Limit</FormLabel>
+              <FormControl>
+                <Input type="number" placeholder="0" {...field} value={field.value ?? ''} disabled={isLoading} />
+              </FormControl>
+              <FormDescription>
+                Maximum number of devices allowed for the user.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+         <FormField
+           control={form.control}
+           name="role_id"
+           render={({ field }) => (
+             <FormItem>
+               <FormLabel>Role</FormLabel>
+               <Select
+                 onValueChange={(value) => field.onChange(value ? parseInt(value, 10) : null)}
+                 defaultValue={field.value?.toString()}
+                 value={field.value?.toString()}
+                 disabled={isLoading}
+               >
+                 <FormControl>
+                   <SelectTrigger>
+                     <SelectValue placeholder="Select a role" />
+                   </SelectTrigger>
+                 </FormControl>
+                 <SelectContent>
+                   {availableRoles.length > 0 ? (
+                     availableRoles.map(role => (
+                       <SelectItem key={role.id} value={role.id.toString()}>
+                         {role.name}
+                       </SelectItem>
+                     ))
+                   ) : (
+                     <SelectItem value="no-roles" disabled>No roles available</SelectItem>
+                   )}
+                 </SelectContent>
+               </Select>
+               <FormMessage />
+             </FormItem>
+           )}
+         />
 
         <FormField
           control={form.control}

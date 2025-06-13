@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('duration_days');
             $table->decimal('traffic_limit_gb', 8, 2); // Example precision
             $table->integer('device_limit');
+            $table->integer('speed_limit_mbps')->nullable(); // Add speed_limit_mbps field
             $table->decimal('price', 10, 2)->nullable(); // Example precision
             $table->json('node_selection_criteria');
             $table->foreignId('target_user_group_id')->nullable()->constrained('user_groups')->onDelete('set null');

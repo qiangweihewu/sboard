@@ -58,6 +58,7 @@ const PlanForm: React.FC<PlanFormProps> = ({
         duration_days: initialData.duration_days || 30,
         traffic_limit_gb: initialData.traffic_limit_gb || 100,
         device_limit: initialData.device_limit || 3,
+        speed_limit_mbps: initialData.speed_limit_mbps || undefined, // Add speed_limit_mbps
         is_active: initialData.is_active === undefined ? true : initialData.is_active,
 
     } : { // Default values for create mode
@@ -66,6 +67,7 @@ const PlanForm: React.FC<PlanFormProps> = ({
         duration_days: 30,
         traffic_limit_gb: 100,
         device_limit: 3,
+        speed_limit_mbps: undefined, // Add speed_limit_mbps
         price: undefined,
         node_selection_criteria: '{"tags": ["default"]}',
         target_user_group_id: undefined,
@@ -81,6 +83,7 @@ const PlanForm: React.FC<PlanFormProps> = ({
           ? JSON.stringify(initialData.node_selection_criteria, null, 2)
           : initialData.node_selection_criteria || '{"tags": ["default"]}',
         price: initialData.price !== null && initialData.price !== undefined ? Number(initialData.price) : undefined,
+        speed_limit_mbps: initialData.speed_limit_mbps !== null && initialData.speed_limit_mbps !== undefined ? Number(initialData.speed_limit_mbps) : undefined, // Add speed_limit_mbps
         target_user_group_id: initialData.target_user_group_id !== null && initialData.target_user_group_id !== undefined ? Number(initialData.target_user_group_id) : undefined,
       };
       form.reset(preparedInitialData);
@@ -91,6 +94,7 @@ const PlanForm: React.FC<PlanFormProps> = ({
             duration_days: 30,
             traffic_limit_gb: 100,
             device_limit: 3,
+            speed_limit_mbps: undefined, // Add speed_limit_mbps
             price: undefined,
             node_selection_criteria: '{"tags": ["default"]}',
             target_user_group_id: undefined,
@@ -171,6 +175,18 @@ const PlanForm: React.FC<PlanFormProps> = ({
                <FormItem>
                  <FormLabel>Price (Optional)</FormLabel>
                  <FormControl><Input type="number" placeholder="10.00" {...field} onChange={e => field.onChange(e.target.value === '' ? null : parseFloat(e.target.value))} value={field.value ?? ''} disabled={isLoading} /></FormControl>
+                 <FormMessage />
+               </FormItem>
+             )}
+           />
+           <FormField
+             control={form.control}
+             name="speed_limit_mbps"
+             render={({ field }) => (
+               <FormItem>
+                 <FormLabel>Speed Limit (Mbps) (Optional)</FormLabel>
+                 <FormControl><Input type="number" placeholder="100" {...field} onChange={e => field.onChange(e.target.value === '' ? null : parseInt(e.target.value, 10))} value={field.value ?? ''} disabled={isLoading} /></FormControl>
+                 <FormDescription>Set a speed limit for this plan. Leave empty for no limit.</FormDescription>
                  <FormMessage />
                </FormItem>
              )}
