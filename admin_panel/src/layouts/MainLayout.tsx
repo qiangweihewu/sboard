@@ -124,7 +124,7 @@ const MainLayout: React.FC = () => {
   };
 
   return (
-<div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b border-white/20 bg-white/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60 dark:bg-slate-900/80 dark:supports-[backdrop-filter]:bg-slate-900/60 shadow-lg transition-all duration-300">
         <div className="container flex h-16 items-center justify-between px-6">
@@ -139,9 +139,9 @@ const MainLayout: React.FC = () => {
             </Button>
             
             <div className="flex items-center space-x-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600 shadow-lg transform hover:scale-105 transition-transform duration-200">
-              <Shield className="h-6 w-6 text-white animate-pulse-slow" />
-            </div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600 shadow-lg transform hover:scale-105 transition-transform duration-200">
+                <Shield className="h-6 w-6 text-white animate-pulse-slow" />
+              </div>
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
                   Xray Manager
@@ -153,7 +153,7 @@ const MainLayout: React.FC = () => {
           
           <div className="flex items-center space-x-4">
             {/* System Status Indicators */}
-          <div className="hidden md:flex items-center space-x-4">
+            <div className="hidden md:flex items-center space-x-4">
               <div className="flex items-center space-x-1 px-2 py-1 rounded-full bg-green-50 dark:bg-green-900/20">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 <span className="text-xs text-green-700 dark:text-green-400 font-medium">API</span>
@@ -165,12 +165,82 @@ const MainLayout: React.FC = () => {
             </div>
 
             {/* Notifications */}
-            <Button variant="ghost" size="sm" className="relative hover:bg-blue-50 dark:hover:bg-slate-800">
-              <Bell className="h-5 w-5" />
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs bg-gradient-to-r from-red-500 to-pink-500 border-0">
-                3
-              </Badge>
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="relative hover:bg-blue-50 dark:hover:bg-slate-800"
+                >
+                  <Bell className="h-5 w-5" />
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs bg-gradient-to-r from-red-500 to-pink-500 border-0">
+                    3
+                  </Badge>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80 bg-white/95 backdrop-blur-xl border-white/20">
+                <DropdownMenuLabel className="flex items-center justify-between">
+                  <span>Notifications</span>
+                  <Badge variant="secondary" className="bg-blue-100 text-blue-700">3</Badge>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                
+                {/* Notification Items */}
+                <div className="max-h-96 overflow-y-auto">
+                  <DropdownMenuItem className="flex items-start space-x-3 p-4 hover:bg-blue-50 dark:hover:bg-slate-800 cursor-pointer">
+                    <div className="flex-shrink-0 w-2 h-2 bg-red-500 rounded-full mt-2"></div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                        System Alert
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        High CPU usage detected on Node-1 (85%)
+                      </p>
+                      <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                        2 minutes ago
+                      </p>
+                    </div>
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuItem className="flex items-start space-x-3 p-4 hover:bg-blue-50 dark:hover:bg-slate-800 cursor-pointer">
+                    <div className="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                        New User Registration
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        User john.doe@example.com has registered
+                      </p>
+                      <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                        5 minutes ago
+                      </p>
+                    </div>
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuItem className="flex items-start space-x-3 p-4 hover:bg-blue-50 dark:hover:bg-slate-800 cursor-pointer">
+                    <div className="flex-shrink-0 w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                        Backup Completed
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        Daily database backup completed successfully
+                      </p>
+                      <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                        1 hour ago
+                      </p>
+                    </div>
+                  </DropdownMenuItem>
+                </div>
+                
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/notifications" className="flex items-center justify-center hover:bg-blue-50 dark:hover:bg-slate-800 cursor-pointer text-blue-600 font-medium">
+                    View All Notifications
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* User Menu */}
             <DropdownMenu>
@@ -193,16 +263,20 @@ const MainLayout: React.FC = () => {
               <DropdownMenuContent align="end" className="w-56 bg-white/95 backdrop-blur-xl border-white/20">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="hover:bg-blue-50 dark:hover:bg-slate-800">
-                  <Settings className="mr-2 h-4 w-4" />
-                  Settings
+                <DropdownMenuItem asChild>
+                  <Link to="/settings" className="flex items-center hover:bg-blue-50 dark:hover:bg-slate-800 cursor-pointer">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="hover:bg-blue-50 dark:hover:bg-slate-800">
-                  <Activity className="mr-2 h-4 w-4" />
-                  Activity Log
+                <DropdownMenuItem asChild>
+                  <Link to="/activity-log" className="flex items-center hover:bg-blue-50 dark:hover:bg-slate-800 cursor-pointer">
+                    <Activity className="mr-2 h-4 w-4" />
+                    Activity Log
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout} className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20">
+                <DropdownMenuItem onClick={logout} className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer">
                   <LogOut className="mr-2 h-4 w-4" />
                   Logout
                 </DropdownMenuItem>
@@ -237,14 +311,14 @@ const MainLayout: React.FC = () => {
                     const active = isActive(item.href);
                     
                     return (
-                        <Link
-                          key={item.name}
-                          to={item.href}
-                          className={`group flex items-center space-x-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
-                            active
-                              ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25 transform scale-[1.02] hover:scale-[1.03]'
-                              : 'text-slate-700 hover:bg-white/80 hover:text-slate-900 hover:shadow-md dark:text-slate-300 dark:hover:bg-slate-800/80 dark:hover:text-slate-100 hover:scale-[1.01]'
-                          }`}
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        className={`group flex items-center space-x-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                          active
+                            ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25 transform scale-[1.02] hover:scale-[1.03]'
+                            : 'text-slate-700 hover:bg-white/80 hover:text-slate-900 hover:shadow-md dark:text-slate-300 dark:hover:bg-slate-800/80 dark:hover:text-slate-100 hover:scale-[1.01]'
+                        }`}
                       >
                         <div className={`p-2 rounded-lg transition-colors ${
                           active 

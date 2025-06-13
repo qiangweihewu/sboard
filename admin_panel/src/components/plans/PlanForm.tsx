@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
+//import { Label } from '@/components/ui/label';
 import {
   Form,
   FormControl,
@@ -195,8 +195,8 @@ const PlanForm: React.FC<PlanFormProps> = ({
             <FormItem>
               <FormLabel>Target User Group (Optional)</FormLabel>
               <Select
-                onValueChange={(value) => field.onChange(value ? parseInt(value, 10) : null)}
-                value={field.value?.toString() ?? ""} // Ensure value is string or empty string for Select
+                onValueChange={(value) => field.onChange(value === "0" ? null : parseInt(value, 10))}
+                value={field.value?.toString() ?? "0"} // Ensure value is string or "0" for Select
                 disabled={isLoading || availableUserGroups.length === 0}
               >
                 <FormControl>
@@ -205,7 +205,7 @@ const PlanForm: React.FC<PlanFormProps> = ({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="">None</SelectItem> {/* Explicit None option */}
+                  <SelectItem value="0">None</SelectItem> {/* Explicit None option with non-empty value */}
                   {availableUserGroups.map(group => (
                     <SelectItem key={group.id} value={group.id.toString()}>
                       {group.name}
